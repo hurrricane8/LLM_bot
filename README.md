@@ -18,7 +18,7 @@ pip install -r requirements.txt
      TG_BOT_TOKEN=<your_telegram_bot_token>
      OLLAMA_MODEL=<your_ollama_model_name>
      ```
-
+    - You can use OLLAMA_MODEL="llama3.2" as the baseline
 4. **Vector Database**:
    - Ensure the FAISS vector database is prepared and stored in `models/faiss_index`.
    - The database should be compatible with the HuggingFace embeddings model `all-MiniLM-L6-v2`.
