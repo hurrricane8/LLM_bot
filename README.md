@@ -2,6 +2,8 @@
 
 This repository contains a Telegram bot that helps users navigate and understand the author's articles on optimization and machine learning (https://scholar.google.com/citations?hl=ru&user=dFpnvz4AAAAJ). The bot provides answers to user queries based on the context of the articles using a vector search mechanism and a conversational AI model.
 
+This bot can be found in telegram: @llm_chat_my_test_bot
+
 ## Prerequisites
 
 1. **Python Version**: Ensure you have Python 3.8 or later installed.
