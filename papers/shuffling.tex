@@ -1,0 +1,902 @@
+\documentclass{article}
+
+
+% if you need to pass options to natbib, use, e.g.:
+%     \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2024
+
+
+% ready for submission
+ \usepackage{icomp2024_conference}
+\icompfinalcopy
+%\usepackage{icomp14submit_e,times}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{lipsum}		% Can be removed after putting your text content
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{doi}
+\usepackage{mathtools}
+\usepackage{xspace}	
+\usepackage{amsthm}
+\usepackage{setspace}
+\usepackage{comment}
+\usepackage{amsmath,amssymb}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tablefootnote}
+\usepackage{array, longtable}
+\usepackage{bbm}
+\usepackage{xcolor}
+\usepackage{epigraph}
+\usepackage{enumitem}
+\usepackage{adjustbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{footnotehyper}
+\usepackage{fnbreak}
+\usepackage{enumitem}
+\usepackage{threeparttable}
+\usepackage{subcaption}
+\usepackage{wrapfig}
+\usepackage{tabularx}
+
+\interfootnotelinepenalty=10000 % предотвращает перенос сноски на другую страницу
+
+
+
+
+\definecolor{maroon}{cmyk}{0,0.87,0.68,0.32}
+\definecolor{yellow}{cmyk}{0,0,1,0}
+\definecolor{orange}{cmyk}{0,0.6,1,0.2}
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+	
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{assumption}{Assumption}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{remark}{Remark}
+
+\newcommand{\blue}[1]{{\color{blue}#1}}
+\usepackage{tcolorbox}
+\usepackage{pifont}
+\definecolor{mydarkgreen}{RGB}{39,130,67}
+\definecolor{mydarkred}{RGB}{192,47,25}
+\definecolor{mypurple}{RGB}{250, 150, 250}
+\newcommand{\green}{\color{mydarkgreen}}
+\newcommand{\red}{\color{mydarkred}}
+\newcommand{\cmark}{{\green\ding{51}}}
+\newcommand{\xmark}{{\red\ding{55}}}
+
+\newlist{assumlist}{enumerate}{1}
+\setlist[assumlist,1]{
+    label=(\alph*),
+    ref=\theassumption(\alph*),
+    align=left,
+    leftmargin=0.4cm
+}
+\makeatletter
+\newcommand\fs@nocaptionruled{%\def\@fs@cfont{\bfseries}%
+  \let\@fs@capt\relax%\floatc@ruled
+  \def\@fs@pre{}%{\hrule height.8pt depth0pt \kern2pt}%
+  \def\@fs@post{\kern2pt\hrule\relax}%
+  \def\@fs@mid{\kern2pt\hrule\kern2pt}%
+  \let\@fs@iftopcapt\iftrue}
+\makeatother
+
+
+
+\title{Shuffling Heuristic in Variational Inequalities: Establishing New Convergence Guarantees}
+
+\author{
+    \centering
+    \hspace{12mm} \begin{tabular}{cc}
+        % First row of authors
+        Daniil Medyakov & \quad Gleb Molodtsov \\
+        \textnormal{MIPT\thanks{Moscow Institute of Physics and Technology}, ISP RAS\thanks{Institute for System Programming RAS}} & \quad \textnormal{MIPT, ISP RAS} \\
+        \vspace{4mm} 
+        \texttt{mediakov.do@phystech.edu} & \quad \texttt{molodtsov.gl@phystech.edu} \\
+       Grigoriy Evseev & \quad Egor Petrov \\
+        \textnormal{MIPT} & \quad \textnormal{MIPT} \\
+        \vspace{4mm} 
+        \texttt{evseev.gv@phystech.edu} & \quad \texttt{petrov.egor.d@phystech.edu} \\
+        % Third author in a new row (single)
+        \multicolumn{2}{c}{Aleksandr Beznosikov} \\
+        \multicolumn{2}{c}{\textnormal{MIPT, ISP RAS, Innopolis University}} \\
+        \multicolumn{2}{c}{\texttt{anbeznosikov@gmail.com}} \\
+    \end{tabular}
+}
+%\date{September 9, 1985}	% Here you can change the date presented in the paper title
+%\date{} 					% Or removing it
+
+
+% Uncomment to remove the date
+%\date{April 2024}
+
+
+\usepackage{xargs}                      % Use more than one optional parameter in a new commands
+ 
+\usepackage[textsize=tiny]{todonotes}
+\newcommandx{\mt}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\mti}[2][1=]{\todo[inline,linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+
+% Uncomment to override  the `A preprint' in the header
+%\renewcommand{\shorttitle}{\textit{arXiv} Template}
+
+%%% Add PDF metadata to help others organize their library
+%%% Once the PDF is generated, you can check the metadata with
+%%% $ pdfinfo template.pdf
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Variational inequalities have gained significant attention in machine learning and optimization research. While stochastic methods for solving these problems typically assume independent data sampling, we investigate an alternative approach - the shuffling heuristic which involves permuting the dataset before sequential processing and ensures equal consideration of all data points. Despite its practical utility, theoretical guarantees for shuffling in variational inequalities remain unexplored. We address this gap by providing the first theoretical convergence estimates for shuffling methods in this context. Our analysis establishes rigorous bounds and convergence rates, extending the theoretical framework for this important class of algorithms. We validate our findings through extensive experiments on diverse benchmark variational inequality problems, demonstrating faster convergence of shuffling methods compared to independent sampling approaches.
+\end{abstract}
+
+\section{Introduction}
+Variational inequalities (VIs) have been attracting researchers' attention in various fields for more than half a century \citep{browder1965nonexpansive}. In this work, we investigate the variational inequality problem in the following form:
+\begin{equation}\label{eq:vi_setting}
+    \text{find}~~ z^* \in Z ~~ \text{such that}~~ \forall z \in Z \hookrightarrow\langle F(z^*), z - z^*\rangle + g(z) - g(z^*) \geqslant 0,
+\end{equation}
+where \( F \) is a monotone operator and \( g \) is a proper convex lower semicontinuous function, which plays the role of regularizer. Variational inequalities serve as a universal tool for addressing particular problems, such as minimization, saddle point problems, fixed point problems, and others \citep{facchinei2003finite, kinderlehrer2000introduction}. We give some examples to provide intuition about VIs. 
+\begin{example}[Convex optimization]\label{ex:convopt}
+    We consider the following convex regularized optimization problem:
+    \begin{equation}\label{eq:convregprob}
+        \underset{z\in\mathbb R^d}{\min} \left[f(z) + g(z)\right].
+    \end{equation}
+    In this example, $f$ is a smooth data representative term, and $g$ is probably a non-smooth regularizer. In this setting, we define $F(z) = \nabla f(z)$. Then $z^*\in \text{dom}~ g$ is the solution of \eqref{eq:vi_setting} if and only if $z^*\in \text{dom~} g$ is the solution of \eqref{eq:convregprob}. In this way, the problem \eqref{eq:convregprob} can be considered as a variational inequality.
+\end{example}
+
+\begin{example}[Convex-concave saddles]\label{ex:convconcsaddle}
+    We consider the following convex-concave saddle point problem:
+    \begin{equation}\label{eq:convconcsaddle}
+        \underset{x\in \mathbb R^{d_x}}{\min}\underset{y\in \mathbb R^{d_y}}{\max} \left[f(x,y) + g_1(x) - g_2(y)\right].
+    \end{equation}
+    There, $f$ has the same interpretation as in Example \ref{ex:convopt}, and $g_1$, $g_2$ can also be perceived as regularizers. In this setting, we define $F(z) = F(x, y) = \left[\nabla_x f(x, y), -\nabla_y f(x, y)\right]$. Then $z^*\in \text{dom}~ g_1 \times \text{dom}~ g_2$ is the solution of \eqref{eq:vi_setting} if and only if $z^*\in \text{dom}~ g_1 \times \text{dom}~ g_2$ is the solution of \eqref{eq:convconcsaddle}. In this way, the problem \eqref{eq:convconcsaddle} can be considered as a variational inequality.
+\end{example}
+
+There are multiple practical reasons to focus on this formulation. Firstly, for numerous non-smooth problems, solutions are often more efficiently obtained when the former are formulated as saddle point problems \citep{nesterov2005smooth, nemirovski2004prox, chambolle2011first, esser2010general}. Secondly, recent studies have found new links between VIs and reinforcement learning \citep{omidshafiei2017deep, jin2020efficiently}, adversarial training \citep{madry2017towards}, and GANs \citep{goodfellow2014generative}. In particular, consideration of monotone and strongly monotone inequalities provides useful methods and recommendations for the GAN community \citep{daskalakis2017training, gidel2018variational, mertikopoulos2018optimistic, chavdarova2019reducing, liang2019interaction, peng2020training}. VIs also have extensive applications in various classical problems, including discriminative clustering \citep{xu2004maximum}, matrix factorization \citep{bach2008convex}, image denoising \citep{esser2010general, chambolle2011first}, robust optimization \citep{ben2009robust}, economics, game theory \citep{von1953theory}, and optimal control \citep{facchinei2003finite}. 
+
+Solving the problem \eqref{eq:vi_setting} requires specialized methods, as traditional optimization techniques, e.g. the gradient method, often fall short when applied to VIs and saddle point problems \citep{harker1990finite}. These classical methods not only struggle with efficiency but also offer weak theoretical convergence guarantees in the VI context \citep{beznosikov2023smooth}. Among the various approaches developed for VIs, the \textsc{Extragradient} method \citep{korpelevich1976extragradient, mokhtari2020unified} stands out as one of the most fundamental and effective techniques.
+
+While variational inequalities provide a powerful framework for addressing a wide range of problems, recent trends in machine learning and data science present new challenges. The exponential growth in dataset sizes and increasing complexity of models have created a pressing need for more efficient computational approaches \citep{bottou2010large, dean2012large, medyakov2023optimal}. To address these challenges in the context of VIs, we reformulate the problem by considering the operator $F$ as the finite sum of operators $F_i$:
+\begin{equation}\label{eq:finite-sum}
+    F(z) = \frac{1}{n}\sum\nolimits_{i=1}^n F_i(z),
+\end{equation}
+where each $F_i$ corresponds to an individual data point. This decomposition allows us to tackle large-scale problems more effectively.
+
+In this paper, we explore stochastic algorithms which are particularly suitable for practical extensive applications. As mentioned before, in such cases, the number of operators $n$ is typically large, making the computation of the full operator value at each iteration computationally expensive. Instead, stochastic algorithms randomly select $F_i$ at each iteration. The stochastic version of the \textsc{Extragradient} method \citep{juditsky2011solving} select random independent indexes $i_t, j_t$ at iteration $t$ and performs the following updates:
+\begin{equation}\label{eq:egstep}
+    \begin{aligned}
+        z^{t+\frac{1}{2}} &= z^t - \gamma F_{i_t} (z^t),\\
+        z^{t+1} &= z^t - \gamma F_{j_t} (z^{t + \frac{1}{2}}).
+    \end{aligned}
+\end{equation}
+\vspace{-4mm}
+
+Just as deterministic \textsc{Extragradient} is the modification of the classical gradient method with an additional step, similarly the stochastic \textsc{Extragradient} is the same modification of \textsc{SGD} \citep{robbins1951stochastic}. Although this method performs well on the variational inequalities, it encounters a significant issue with its properties and performance thoroughly studied: the variance of its inherent stochastic estimators of operators remains high throughout the learning process. Hence, \textsc{Extragradient} with a constant learning rate converges linearly only to a neighborhood of the optimal solution, the size of which is proportional to the step size and variance \citep{juditsky2011solving}. This problem is also characteristic of classical \textsc{SGD} \citep{bottou2009curiously, moulines2011non, gower2020variance}. 
+
+To address this limitation, the variance reduction (VR) technique was developed for a classical finite-sum minimization task \citep{johnson2013accelerating}. The method involves the following steps: at the $t$-th iteration, an index $i_t$ is selected along with a reference point $\omega^t$, which is updated once per epoch or selected probabilistically (as in loopless versions, e.g., \citep{kovalev2020don}). Considering convex optimization problem (see Example \ref{ex:convopt}), we can formally write the stochastic reduced gradient at the point $z^{t+\frac{1}{2}}$ as
+\begin{equation*}
+    \nabla\hat{f}_{i_t} (z^{t+\frac{1}{2}}) = \nabla f_{i_t} (z^{t+\frac{1}{2}}) - \nabla f_{i_t} (\omega^t) + \nabla f (\omega^t).
+\end{equation*} 
+\vspace{-4mm}
+
+The objective of the variance reduction mechanisms is to overcome the limitations of naive gradient estimators. The former employ an iterative process to construct and apply a gradient estimator with progressively reduced variance. This approach allows for the safe use of larger learning rates, thereby accelerating the training process. 
+
+Besides, along with aforementioned \textsc{SVRG}, some of the most popular methods for solving the classical finite-sum problem based on this technique are \textsc{SAG} \citep{roux2012stochastic}, \textsc{SAGA} \citep{defazio2014saga}, \textsc{Finito} \citep{defazio2014finito}, \textsc{SARAH} \citep{nguyen2017sarah, hu2019efficient}, and \textsc{SPIDER} \citep{fang2018spider}. The technique of variance reduction is used not only in methods that solve the minimization problem. It is also applicable in the methods for the problem \eqref{eq:vi_setting}. Examples are variance reduced versions of \textsc{Extragradient}, \textsc{Mirror-prox} \citep{alacaoglu2022stochastic}, \textsc{gradient method} \citep{palaniappan2016stochastic}, and \textsc{forward-reflected-backward (FoRB)} \citep{alacaoglu2021forward}.
+
+In addition to stochastic methods, various heuristics exist for selecting the \(i_t\)-th index at each iteration of algorithms. Thoroughly examining these heuristics could lead to the development of more stable and efficient algorithms in the future. In this paper, we explore the shuffling heuristic \citep{mishchenko2020random, safran2020good, koloskova2024convergence, malinovsky2023random}. Unlike the random and independent selection of the index \(i_t\) at each iteration, which is common in classical stochastic methods, this heuristic adopts a more practical approach. Specifically, it involves permuting the sequence of indexes \(\{1, \ldots, n\}\), where $n$ is the number of data samples \eqref{eq:finite-sum}, and then selecting the index corresponding to the iteration number during the algorithm's execution. It guarantees us that at one epoch of training we make a step for each operator, and once. This property seems important and finds its application in many practical tasks \citep{chambolle2011first, xu2004maximum, bach2008convex}. There are several shuffling techniques available. Among the most popular are Random Reshuffling (RR) \citep{gurbuzbalaban2021random, haochen2019random, nagaraj2019sgd}, where data is shuffled before each epoch; Shuffle Once (SO) \citep{safran2020good, rajput2020closing}, where shuffling occurs once before the start of training; and Cyclic permutation \citep{mangasarian1993serial, bertsekas2000gradient, nedic2001incremental, li2019incremental}, where data is accessed deterministically in a cyclic order.
+
+\textbf{Related works.}
+There are many methods available to solve the problem of variational inequalities. As we mentioned above, the standard deterministic choice for solving the problem \eqref{eq:vi_setting} is \textsc{Extragradient} \citep{korpelevich1976extragradient}. This method deals with variational inequalities in the Euclidean setup. Later, \textsc{Mirror-prox} \citep{nemirovski2004prox}, which exploits the Bregman divergence, was proposed. This approach allowed to take into account generalized geometry that could be non-Euclidean. Besides, there are a set of deterministic methods for solving VIs: \textsc{forward-backward-forward (FBF)} \citep{tseng2000modified}, \textsc{Dual extrapolation} \citep{nesterov2007dual}, \textsc{reflected gradient} \citep{malitsky2015projected}, \textsc{forward-reflected-backward (FoRB)} \citep{malitsky2020forward}. 
+
+For the first time, the stochastic version of algorithms for solving VIs was proposed in the work \citep{juditsky2011solving}. Later, to reduce the variance inherent in these stochastic methods, researchers turned to the variance reduction technique. The first works in this field are \citep{palaniappan2016stochastic, chavdarova2019reducing}. In particular, the stochastic \textsc{gradient method} with variance reduction was studied in \citep{palaniappan2016stochastic}. The method was based on \textsc{SVRG} \citep{johnson2013accelerating} and added the Catalyst envelope acceleration. The combination of \textsc{Extragradient} and \textsc{SVRG} was considered in \citep{chavdarova2019reducing}, which also utilizes the VR technique and achieves better convergence rate. However, only strongly monotone VIs were considered in these works. Consequently, a notable paper in which the authors considered monotone operators was presented \citep{carmon2019variance}. This work also falls under the Bregman setup but requires additional assumptions on the operator $F$
+and considers the matrix games setup. The current state-of-the-art in this area is the article \citep{alacaoglu2022stochastic}, which improves the convergence estimates of previous studies. This work addresses various scenarios, including generally monotone and strongly monotone operators, as well as the Bregman and Euclidean setups.
+Convergence results from the papers highlighted above are summarized in Table \ref{tab:methodscomp}.
+
+%\begin{figure}[htbp]
+%\begin{minipage}[t]{1\linewidth}
+\begin{table} 
+    \centering
+    \scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{threeparttable}
+\caption{\label{tab:methodscomp} Comparison of the convergence results for the methods for solving VI.}
+\renewcommand{\arraystretch}{2}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\textbf{Algorithm} & \textbf{Sampling} & \textbf{VR?} &
+\begin{tabular}{@{}l@{}}
+\vspace{-3mm}\textbf{Strongly} \\
+\vspace{-3mm}\textbf{Monotone} \\  \textbf{Complexity}
+\end{tabular}
+ & \begin{tabular}{@{}l@{}}
+\vspace{-3mm} \textbf{Monotone} \\  \textbf{Complexity}
+\end{tabular} \\ \hline
+Extragradient \citep{korpelevich1976extragradient,mokhtari2020unified} & Deterministic &  \xmark & $\mathcal{\widetilde{O}}\left(\frac{nL}{\mu}\right)$ &  $\mathcal{O}\left(\frac{nL}{\varepsilon}\right)$ \\ \hline
+Mirror-prox \citep{nemirovski2004prox} & Deterministic & \xmark & $\backslash$ &  $\mathcal{O}\left(\frac{nL}{\varepsilon}\right)$ \\ \hline
+FBF \citep{tseng2000modified} & Deterministic & \xmark & $\backslash$ &  $\mathcal{O}\left(\frac{nL}{\varepsilon}\right)$ \\ \hline
+FoRB \citep{malitsky2020forward} & Deterministic & \xmark & $\backslash$ &  $\mathcal{O}\left(\frac{nL}{\varepsilon}\right)$ \\ \hline
+Mirror-prox \citep{juditsky2011solving} & Independent & \xmark & $\backslash$ &  $\mathcal{O}\left(\frac{L}{\varepsilon} + \frac{1}{\varepsilon^2}\right)$ \\ \hline
+Extragradient \citep{beznosikov2020distributed} & Independent & \xmark & $\mathcal{\widetilde{O}}\left(\frac{L}{\mu} + \frac{1}{\mu^2\varepsilon}\right)$ &  $\mathcal{O}\left(\frac{L}{\varepsilon} + \frac{1}{\varepsilon^2}\right)$ \\ \hline
+REG \citep{mishchenko2020revisiting} & Independent & \xmark & $\mathcal{\widetilde{O}}\left(\frac{L}{\mu} + \frac{1}{\mu^2\varepsilon}\right)$&  $\mathcal{O}\left(\frac{L}{\varepsilon} + \frac{1}{\varepsilon^2}\right)$  \\ \hline
+Extragradient \citep{carmon2019variance} & Independent & \cmark & $\backslash$  &  $\mathcal{\widetilde{O}}\left(n + \frac{\sqrt{n}\overline{L}}{\varepsilon}\right)$ \\ \hline
+Mirror-prox \citep{carmon2019variance} & Independent & \cmark & $\backslash$ &  $\mathcal{\widetilde{O}}\left(n + \frac{\sqrt{n}\overline{L}}{\varepsilon}\right)$ \\ \hline
+FBF \citep{palaniappan2016stochastic} & Independent & \cmark & $\mathcal{\widetilde{O}}\left(n + \frac{\sqrt{n}\overline{L}}{\mu}\right)$ &  $\mathcal{\widetilde{O}}\left(n + \frac{\sqrt{n}\overline{L}}{\varepsilon}\right)^{\red{(1)}}$ \\ \hline
+Extragradient \citep{chavdarova2019reducing} & Independent & \cmark & $\mathcal{\widetilde{O}}\left(n + \frac{\overline{L}^2}{\mu^2}\right)$ &  $\mathcal{\widetilde{O}}\left(n + \frac{\overline{L}^2}{\varepsilon^2}\right)^{\red{(1)}}$ \\ \hline
+FoRB \citep{alacaoglu2021forward} & Independent & \cmark & $\backslash$&  $\mathcal{O}\left(n + \frac{n\overline{L}}{\varepsilon}\right)$ \\ \hline
+Extragradient \citep{alacaoglu2022stochastic} & Independent & \cmark & $\mathcal{\widetilde{O}}\left(n + \frac{\sqrt{n}\overline{L}}{\mu}\right)$ &  $\mathcal{O}\left(n + \frac{\sqrt{n}\overline{L}}{\varepsilon}\right)$ \\ \hline
+Mirror-prox \citep{alacaoglu2022stochastic} & Independent & \cmark & $\backslash$ &  $\mathcal{O}\left(n + \frac{\sqrt{n}\overline{L}}{\varepsilon}\right)$ \\ \hline
+\rowcolor{yellow} Extragradient (this paper) & RR / SO & \xmark & $\mathcal{\widetilde{O}}\left(n + \frac{L}{\mu} + \frac{n^2}{\mu^2\varepsilon}\right)$ & $\mathcal{\widetilde{O}}\left(n + \frac{L}{\varepsilon} + \frac{n^2}{\varepsilon^3}\right)^{\red{(1)}}$ \\ \hline
+\rowcolor{yellow} Extragradient (this paper) & RR / SO & \cmark & $\mathcal{\widetilde{O}}\left(n\frac{L^2}{\mu^2}\right)$ &  $\mathcal{\widetilde{O}}\left(n\frac{L^2}{\varepsilon^2}\right)^{\red{(1)}}$  \\ \hline 
+\end{tabular}%
+\begin{tablenotes}
+    \item [] {\em Columns:} Sampling = Deterministic, if considered non-stochastic method, Independent, if method uses independent choice of operator's indexes, RR / SO if method uses shuffling heuristic, Assumption = assumption on operator $F$, VR? = whether the method uses variance reduction technique.
+    \item [] {\em Notation:} $\mu$ = constant of strong monotonicity, $L$ = Lipschitz constant of F, $\overline{L}$ = Lipschitz in mean constant, i.e. $\nicefrac{1}{n}\sum\nolimits_{i=1}^n \|F_i(z_1) - F_i(z_2)\| \leqslant L \|z_1 - z_2\| ~\forall z_1, z_2 \in Z$, $n$ =  size of the dataset, $\varepsilon$ = accuracy of the solution.
+    \item [] {\red{(1)}}: This result is obtained with regularization trick: $\mu \sim \nicefrac{\varepsilon}{D^2}$.
+\end{tablenotes}    
+\end{threeparttable}
+}
+\vspace{-6mm}
+\end{table}
+%\end{minipage}
+%\end{figure}
+
+\vspace{-1mm}
+In all these papers, the estimates were obtained in the formulation with an independent choice of the indexes of the operator at each step of the algorithm. As for the shuffling heuristic, there are many papers that explore methods suitable for solving classical finite-sum minimization problems. In the work \citep{mishchenko2020random}, the authors proposed a classical \textsc{SGD} algorithm, and, by introducing a new notion of variance specific to
+RR/SO, they were able to match the lower bounds in such cases. In the work \citep{malinovsky2023random}, the \textsc{SVRG} method with RR was considered. The authors actively used results of the work \citep{mishchenko2020random} and obtain better rates. Besides, there are a set of works, that considered methods uses the VR technique in the shuffling setup \citep{huang2021improved, mokhtari2018surpassing, ying2020variance}. However, so far there are no papers where the shuffling setting would be used to solve variational inequalities. We are filling this gap.
+
+\textbf{Contributions.}
+Our main results can be summarized as follows.\\
+$\bullet$ \textit{Novel approach to proof.} Since shuffling methods do not have the property of unbiasedness of stochastic operators, it is necessary to propose new approaches to prove convergence. In this paper, we present a technique that allows us to "return" to the starting point of an epoch in which there is a property of unbiasedness.\\
+$\bullet$ \textit{Convergence estimates.} We provide the first theoretical convergence rates for shuffling methods applied to the finite-sum variational inequality problem. We consider two algorithms: \textsc{Extragradient} and \textsc{Extragradient} with variance reduction. Our comprehensive analysis establishes upper bounds on convergence rates, extending the theoretical framework to encompass this important class of algorithms. In the case of \textsc{Extragradient}, our estimate on the linear term coincides with that for the method without shuffling, and in the case of \textsc{Extragradient} with VR, we are the first to obtain a linear convergence estimate for methods with shuffling in the VI problem.\\
+$\bullet$ \textit{Experiments.} We conduct comprehensive experiments, which emphasize the superiority of shuffling over the random index selection heuristic. We consider two classical practical applications: image denoising and adversarial training.
+
+\vspace{-2mm}
+\section{Setup}
+\vspace{-2mm}
+
+\textbf{Assumptions.} Now we present a list of assumptions within which we obtain the main statements.
+\begin{assumption}\label{as:lipschitz}
+    Each operator $F_i$ is $L$-Lipschitz, i.e., it satisfies $\|F_i(z_1) - F_i(z_2)\| \leq L\|z_1 - z_2\|$ for any $z_1, z_2 \in Z$.
+\end{assumption}
+\begin{assumption}\label{as:monotone}
+    Each operator $F_i$ is $\mu$-strongly monotone, i.e., it satisfies $\langle F_i(z_1) - F_i(z_2), z_1 - z_2\rangle \geqslant \mu\|z_1 - z_2\|^2$ ~for any $z_1, z_2 \in Z$.  
+\end{assumption}
+\begin{assumption}\label{as:bound}
+    Each stochastic operator $F_i$ and full operator $F$ is bounded at the point of the solution $z^*\in\text{dom}~ g$, i.e. $\mathbb E \|F_i(z^*)\|^2 \leqslant \sigma_*^2, \|F(z^*)\|^2 \leqslant \sigma_*^2$.  
+\end{assumption}
+
+\textbf{Proximal Algorithm.}
+Earlier, we gave examples of the application of variational inequalities (Examples \ref{ex:convopt}, \ref{ex:convconcsaddle}). In many optimization problems, particularly in machine learning and signal processing, we often encounter the need to minimize the function of the same form, i.e. decomposed it into two parts: a smooth differentiable function \( f : \mathbb{R}^n \rightarrow \mathbb{R} \) and a possibly non-smooth function \( g : \mathbb{R}^n \rightarrow \mathbb{R} \). To solve this problem, we can utilize the proximal gradient method. The core idea is to iteratively update the solution by combining gradient descent on the smooth part \( f \) and the proximal operator for the probably non-smooth part \( g \). We also assume that $g$ is proximal friendly, i.e. the computation of the proximal operator is done for free or costs very little. The proximal operator of the function \( g \) at a point \( x \) is defined as:
+\begin{equation*}
+\text{prox}_{g}(z) = \arg\min_{y \in \mathbb{R}^n} \left\{ g(y) + \frac{1}{2} \| y - z \|^2 \right\},
+\end{equation*}
+\vspace{-2mm}
+
+where \( \| \cdot \| \) denotes the Euclidean norm.
+Using the proximal operator, the update step for solving the optimization problem can be written as:
+\begin{equation*}
+z^{t+1} = \text{prox}_{\alpha_t g}\left( z^t - \alpha_t \nabla f(z^t) \right).
+\end{equation*}
+For us, the proximal operator plays a role, since \eqref{eq:vi_setting} also uses a regularizer.
+
+\section{Algorithms and convergence analysis}
+\subsection{Extragradient}
+
+The setting of shuffling lies in the fact that we do not choose stochastic operator independently at each step of the method. Instead, we permute the sequence of indexes and, at each iteration, of the algorithm we choose operator according to the new sequence. In this work, we pay attention to the Random Reshuffling and Shuffle Once techniques and provide appropriate \textsc{Extragradient} methods (Algorithms \ref{alg:rrextragrad}, \ref{alg:soextragrad}).  
+%\vspace{-6mm}
+\begin{figure}[htbp]
+    \begin{minipage}[t]{0.5\linewidth}
+        \begin{algorithm}[H]
+        \footnotesize
+        \caption{\textsc{RR Extragradient}}\label{alg:rrextragrad}
+        \begin{algorithmic}[1]
+        \State \textbf{Input:} Starting point $z^0_0\in\mathbb{R}^d$
+        \State \textbf{Parameter:} Stepsize $\gamma$
+        \For{$s = 0, 1, 2, \ldots, S-1$}
+            \State \textcolor{orange}{Generate a permutation $\pi_0, \pi_1, \ldots, $ $\pi_{n-1}$ of sequence $\{1, 2, \ldots, n\}$}
+            \For{$t = 0, 1, 2, \ldots, n-1$}  
+                \State $z^{t + \frac{1}{2}}_s = \text{prox}_{\gamma g}\left(z^t_s - \gamma F_{\pi_s^t}(z^t_s)\right)$
+                \State $z^{t + 1}_s = \text{prox}_{\gamma g}\left(z^t_s - \gamma F_{\pi_s^t}(z^{t + \frac{1}{2}}_s)\right)$
+            \EndFor
+            \State $z_s^n = z_{s+1}^0$
+        \EndFor
+        \State \textbf{Output:} $z^n_S$
+        \end{algorithmic}
+        \end{algorithm}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.5\linewidth}
+        \begin{algorithm}[H]
+        \footnotesize
+        \caption{\textsc{SO Extragradient}}\label{alg:soextragrad}
+        \begin{algorithmic}[1]
+        \State \textbf{Input:} Starting point $z^0_0\in\mathbb{R}^d$
+        \State \textbf{Parameter:} Stepsize $\gamma$
+        \State \textcolor{orange}{Generate a permutation $\pi_0, \pi_1, \ldots, \pi_{n-1}$ of sequence $\{1, 2, \ldots, n\}$}
+        \For{$s = 0, 1, 2, \ldots, S-1$}
+            \For{$t = 0, 1, 2, \ldots, n-1$}  
+                \State $z^{t + \frac{1}{2}}_s = \text{prox}_{\gamma g}\left(z^t_s - \gamma F_{\pi_s^t}(z^t_s)\right)$
+                \State $z^{t + 1}_s = \text{prox}_{\gamma g}\left(z^t_s - \gamma F_{\pi_s^t}(z^{t + \frac{1}{2}}_s)\right)$
+            \EndFor
+            \State $z_s^n = z_{s+1}^0$
+        \EndFor
+        \State \textbf{Output:} $z^n_S$
+        \end{algorithmic}
+        \end{algorithm}
+    \end{minipage}
+\end{figure}
+%\vspace{-2mm}
+
+The analysis of shuffling methods has some specific details. The key difference between shuffling and independent choice is that shuffling methods do not have one essential feature -- unbiasedness of stochastic operators:
+\begin{equation*}
+    \mathbb E_{\pi_s^t} \left[F_{\pi_s^t}(z_s^t)\right] \neq \frac{1}{n}\sum\nolimits_{i = 1}^n F_{\pi_s^i}(z_s^t) = F(z_s^t).
+\end{equation*}
+
+\vspace{-2mm}
+This restriction leads us to a more complex analysis and non-standard techniques to prove convergence of the shuffling methods. Nevertheless, at two points -- $z_s^0$ and $z^*$, this equality is true. Indeed, the point $z_s^0$ is the first point of the epoch and there we choose one random index out of $n$, and the point $z^*$ does not depend on $t$. Thus, we can "go back" at the beginning of the epoch and take advantage of the unbiased operators. This technique is interesting not only in relation to shuffling methods. For example, it is applicable to methods that use Markov chains to select indexes, because there is also no unbiased property anywhere except at the correlation point of the chain. This is the key point of our analysis, and now, having shown it, we present the main result of this section.
+
+\begin{theorem}\label{th:eg}
+    Suppose Assumptions \ref{as:lipschitz}, \ref{as:monotone}, \ref{as:bound} hold. Then for Algorithms \ref{alg:rrextragrad}, \ref{alg:soextragrad} with $\gamma\leqslant\min\left\{\frac{1}{2\mu n}, \frac{1}{6L}\right\}$ after $S$ epochs,
+    \vspace{-2mm}
+    \begin{equation*}
+        \|z_S^n - z^*\|^2 \leqslant (1 - \frac{\gamma\mu}{2})^{Sn} \|z^0_0 - z^*\|^2 +  \frac{256\gamma n^2\sigma^2_*}{\mu}.
+    \end{equation*}
+\end{theorem}
+
+\begin{corollary}\label{cor:eg}
+    Suppose Assumptions \ref{as:lipschitz}, \ref{as:monotone}, \ref{as:bound} hold. Then Algorithms \ref{alg:rrextragrad}, \ref{alg:soextragrad} with $\gamma \leqslant \min\left\{\frac{1}{2\mu n}, \frac{1}{6L}, \frac{2\log\left(\max\left\{2, \frac{\mu^2\|z_0^0 - z^*\|^2 T}{512 n^2\sigma^2_*}\right\}\right)}{\mu T}\right\}$, to reach $\varepsilon$-accuracy, where $\varepsilon \sim \|z_S^n - z^*\|^2$, needs
+    \begin{equation*}
+    \mathcal{\widetilde{O}}\left(\left(n + \frac{L}{\mu}\right)\log\left(\frac{1}{\varepsilon}\right) + \frac{n^2\sigma^2_*}{\mu^2\varepsilon}\right) ~~\text{iterations and oracle calls.}
+    \end{equation*}
+\end{corollary}
+
+\begin{remark}\label{rem:eg}
+    We can transform the obtained estimation for the case of monotone stochastic operators. To do this, we use a regularization trick with $\mu\sim \frac{\varepsilon}{D}$. Thus, solving the problem with the operator $\hat{F}(z) = F(z) + \mu(z-z_0^0)$ with the accuracy $\frac{\varepsilon}{2}$, we solve the problem \eqref{eq:vi_setting} with the accuracy $\varepsilon$ and obtain $\mathcal{\widetilde{O}}\left(n + \frac{L}{\varepsilon} + \frac{n^2}{\varepsilon^3}\right)$ iteration and oracle complexity. This is convergence in argument, it differs from the classical form.
+\end{remark}
+\vspace{-2mm}
+Let us explain the result of the theorem. The form of the estimate is classical and appears in all stochastic methods for strongly convex minimization \citep{moulines2011non, stich2019unified} and strongly monotone VIs \citep{beznosikov2020distributed, mishchenko2020revisiting}. Let us compare it with the results of related works. Our method is based on \textsc{REG} \citep{mishchenko2020revisiting}. In this work, authors obtain $\mathcal{\widetilde{O}}\left(\frac{L}{\mu} + \frac{1}{\mu^2\varepsilon}\right)$ oracle complexity. Therefore, our result is a great achievement in the shuffling theory, since despite the deterioration on $n$ in the sublinear term, the estimation on the linear term coincides with that in the classical setting with independent choice of stochastic operators. Let us also compare the result with the work \citep{juditsky2011solving}. The authors obtain $\mathcal{O}\left(\frac{L}{\varepsilon} + \frac{1}{\varepsilon^2}\right)$. However, uniform bounds on the variance were required in this work, and we bound the variance only at the optimum. Note that, according to current theory, shuffling methods are no more effective than methods with independent sampling for the classical minimization problem \citep{mishchenko2020random, koloskova2024convergence}.
+
+Let us pay attention to the second term in the estimation.  In general, the sublinear term with $\sigma_*^2$ is not improved. However, for the finite-sum problem, this term can be eliminated by using additional techniques, such as variance reduction.
+
+\vspace{-2mm}
+\subsection{Extragradient with variance reduction}
+\vspace{-2mm}
+
+Now we use the variance reduction technique, which improves the convergence of the algorithms by reducing the influence of random fluctuations. This approach was not used in the previous algorithms presented. We introduce a version of the RR/SO \textsc{Extragradient} with variance reduction algorithm (Algorithm \ref{alg:proxextragradvr}) and the convergence results for this method. Note the peculiarity in Line \ref{alg3:line11} of this algorithm. In the work \citep{malinovsky2023random}, where shuffling is investigated in variance reduction methods, the authors use a more classical version and compute $F(\omega_s^t)$ at the beginning of each epoch. We consider another option and compute this full operator randomly with probability $p$. We put $p = \frac{1}{n}$ not to increase the oracle complexity and obtain that on average we also update the full operator once per epoch. 
+
+\begin{theorem}\label{th:proxegvr}
+    Suppose that Assumptions \ref{as:lipschitz}, \ref{as:monotone} hold. Then for Algorithm \ref{alg:proxextragradvr} with $\gamma \leqslant\frac{(1-\alpha)\mu}{6L^2}, p = \frac{1}{n}$ and $V_s^t =\mathbb E \|z_s^t - z^*\|^2 + \mathbb E\|\omega_s^t - z^*\|^2$ after $T$ iterations,
+    \begin{equation*}
+        V_S^n \leqslant \left(1 - \frac{\gamma\mu}{4}\right)^T V_0^0.
+    \end{equation*}
+\end{theorem}
+
+\begin{corollary}\label{cor:proxegvr}
+    Suppose that Assumptions \ref{as:lipschitz}, \ref{as:monotone} hold. Then Algorithm \ref{alg:proxextragradvr} with $\gamma \leqslant\frac{(1-\alpha)\mu}{6L^2}, p = \frac{1}{n}$ and $V_s^t =\mathbb E \|z_s^t - z^*\|^2 + \mathbb E\|\omega_s^t - z^*\|^2$, to reach $\varepsilon$-accuracy, where $\varepsilon \sim V_S^n$, needs
+    \begin{align*}
+    &\mathcal{O}\left(n\frac{L^2}{\mu^2}\log\left(\frac{1}{\varepsilon}\right)\right) ~~\text{iterations and oracle calls.}
+    \end{align*}
+\end{corollary}
+
+\begin{remark}\label{rem:egvr}
+    Similarly to Remark \ref{rem:eg}, we can use our result in the monotone case by the regularization trick and obtain $\mathcal{\widetilde{O}}\bigl(n\frac{L^2}{\varepsilon^2}\bigr)$.
+\end{remark}
+
+%\begin{wrapfigure}{r}{\textwidth}
+%\begin{minipage}{\textwidth}
+\begin{algorithm}[H]
+\footnotesize
+\caption{RR/SO \textsc{Extragradient} with variance reduction}\label{alg:proxextragradvr}
+\begin{algorithmic}[1]
+\State \textbf{Input:} \textbf{Parameters:} $z_0^0, \omega_0^0$
+\State \textbf{Parameter:} Stepsize $\gamma$, $\alpha \in (0, 1)$ 
+\State \textcolor{orange}{Generate a permutation $\pi_0, \pi_1, \ldots, \pi_{n-1}$ of sequence $\{1, 2, \ldots, n\}$} \quad\quad//\quad SO heuristic
+\For{$s = 0, 1, \ldots$}
+    \State \textcolor{orange}{Generate a permutation $\pi_0, \pi_1, \ldots, \pi_{n-1}$ of sequence $\{1, 2, \ldots, n\}$} ~~//\quad RR heuristic
+    \For{$t = 0, 1, \ldots, n-1$}
+        \State $\overline{z}_s^t = \alpha z_s^t + (1 - \alpha) \omega_s^t$
+        \State$z_s^{t+\nicefrac{1}{2}} = \text{prox}_{\gamma g} \left(\overline{z}_s^t - \gamma F\left(\omega_s^t\right)\right)$
+        \State $\hat{F}(z_s^{t + \nicefrac{1}{2}}) = F_{\pi_s^t} (z_s^{t + \nicefrac{1}{2}}) - F_{\pi_s^t} (\omega_s^t) + F(\omega_s^t)$
+        \State$z_s^{t+1} = \text{prox}_{\gamma g} \left(\overline{z}_s^t - \gamma \hat{F} \left(z_s^{t+\nicefrac{1}{2}}\right)\right)$
+        \State\label{alg3:line11} $\omega_s^{t+1} = \begin{cases}
+            z_s^t, \quad &\text{with probability}\quad p\\
+            \omega_s^t \quad &\text{with probability}\quad 1-p
+        \end{cases}$
+    \EndFor
+    \State $z_{s+1}^0 = z_s^n$
+    \State $\omega_{s+1}^0 = \omega_s^n$
+\EndFor
+\State \textbf{Output:} $z^n_S$
+\end{algorithmic}
+\end{algorithm}
+%\end{minipage}
+%\end{wrapfigure}
+
+We remove the variance that arose in Theorem \ref{th:eg} and obtain the linear convergence. Even though we get worse estimates than in the works that also use variance reduction technique, such as \citep{alacaoglu2022stochastic, alacaoglu2021forward, chavdarova2019reducing, palaniappan2016stochastic} (see Table \ref{tab:methodscomp}), there is a distinct explanation for this. According to current theory, methods with the shuffling heuristic are worse than methods with independent sampling for the variance reduction methods \citep{malinovsky2023random}. Thus, we were unable to obtain theoretical convergence estimates for methods using shuffling heuristics that are equivalent to those for methods with independent index selection for the VI problem. Additionally, in the course of the work, no theoretical differences were revealed in the SO and RR techniques in relation to the problem \eqref{eq:vi_setting}.
+
+\section{Experiments}
+\label{sec:experiments}
+In this section, we evaluate the proposed algorithms to demonstrate their practical applications by conducting experiments in two cases: image denoising and adversarial training.
+
+\subsection{Image denoising} 
+
+To formulate the image denoising problem \citep{chambolle2011first}, we consider the classic saddle point problem as we did in Example \ref{ex:convconcsaddle}:
+$$
+\min_{x \in \mathcal{X}} \max_{y \in \mathcal{Y}} \left[\langle Kx, y \rangle + G_1(x) - G_2(y)\right],
+$$
+where regularizers \(G_1\) and \(G_2\) are proper convex lower semicontinuous functions, and \(K\) is a continuous linear operator. To proceed to image denoising, we consider $g$ is a given noisy image and $u$ is a solution we seek. We use the Cartesian grid with the step $h: \{(i\cdot h, j\cdot h)\}$. Thus, specifically for the image denoising, we consider:
+$$
+\min_{u \in \mathcal{X}} \max_{p \in \mathcal{Y}} \left[\langle \nabla u, p \rangle_{\mathcal{Y}} + \nicefrac{\lambda}{2} \|u - g\|^2_2 - \delta_{P}(p)\right],
+$$
+where $p$ is a dual variable, \(\delta_{P}(p)\) is the indicator function of the set \(P\) defined as: $ P = \{ p \in \mathcal{Y} : \| p(x) \| \leq 1 \}.$ The indicator function \(\delta_P(p)\) is defined as zero if \(p\) belongs to the set \(P\), and infinity otherwise. We define operator $\nabla u$ as the difference between neighboring pixels in the grid horizontally and vertically, normalizing by the step of the grid $h$. This formulation represents a saddle point problem, where we seek to minimize the first term with respect to \(u\) while simultaneously maximizing the second term with respect to \(p\). Using duality, we can write the final formulation of considering problem as
+\begin{equation} \label{problem_denoising}
+\min_{u \in \mathcal{X}} \max_{p \in \mathcal{Y}} \left[-\langle u, \text{div} ~p \rangle_{\mathcal{X}} + \nicefrac{\lambda}{2} \|u - g\|^2_2 - \delta_{P}(p)\right].
+\end{equation}
+\vspace{-2mm}
+
+% Firstly, we consider the image denoising problem. We obtain that the given noised image can be decomposed into two components: original clean image and noise:
+% \vspace{-0.1cm}
+% \begin{equation}
+% \label{eq:noise}
+%     u_{0}(x, y) = u(x, y) + n(x, y).
+% \end{equation}
+% \vspace{-0.5cm}
+
+% Our task is to restore the original image $u(x, y)$ from the noisy one.
+% We define the loss function as
+% \vspace{-0.1cm}
+% \begin{equation}
+% \label{eq:loss}
+%     Loss: f(u) =  \| \nabla u \|_{1, 2} + \frac{\lambda}{2} \| u - u_{0} \|_2 ^2,
+% \end{equation}
+% where $\lVert \nabla u \rVert_{1, 2}$ denotes a discrete analogue of the gradient, namely the pixel-by-pixel difference between adjacent elements of the image matrix, $\lVert \nabla u \rVert_{1, 2} = \left( \nabla u_{i, j}^x, \nabla u_{i, j}^y \right)^T = \left( \nicefrac{(u_{i, j} - u_{i + 1, j})}{h}, \nicefrac{(u_{i, j} - u_{i, j + 1})}{h} \right)^T$. The parameter $h$ is connected with the way the picture is initially presented: we deal with an image as a pixel grid, where $h$ is the characteristic step size. By calculating the gradient of the expression above, we get 
+% \begin{equation}
+% \label{eq:div}
+%     \frac{\partial \| \nabla u \|_{2, 1}}{\partial u} = -div\left(\frac{\nabla u}{\sqrt{|\nabla u|^2 + \varepsilon}} \right) \text{, where } div(p)_{i,j} = \frac{-p_{i,j}^x+p_{i+1,j}^x}{h} + \frac{-p_{i,j}^y+p_{i,j+1}^y}{h}.
+% \end{equation}
+% As we can see from Equation \ref{eq:div}, the loss expression in Equation \ref{eq:loss} can be easily differentiated; therefore, first-order gradient algorithms can be applied to the denoising problem. To utilize stochastic methods for image denoising, we divide the image into squares of fixed size, which we refer to as batches. This allows us to implement various shuffling techniques across all our algorithms. These techniques help prevent the application of denoising to repeated batches of the same image within a single epoch, thereby improving the quality of the solution.
+
+To bring the problem to the form of a finite sum \eqref{eq:finite-sum}, we divide images into batches -- equal squares. We consider two options -- batches of size 4 and 8, according to the grid. Since the images are black and white, they are single-channel, which means that each batch is a square matrix with non-negative integers. It is also important to note that when calculating the gradient, the edges of the batch are processed according to the rule of adding a number equal to the nearest neighbor.
+
+We compare the RR/SO \textsc{Extragradient} with variance reduction (Algorithm \ref{alg:proxextragradvr}) with \textsc{Extragradient} with variance reduction \citep{alacaoglu2022stochastic}. Analogically we compare the RR/SO \textsc{Extragradient} (Algorithms \ref{alg:rrextragrad}, \ref{alg:soextragrad}) and \textsc{Extragradient} \citep{juditsky2011solving}. We select two images with different levels of additive zero-mean Gaussian noise: \(\sigma = 0.05\) and \(\sigma = 0.1\). Figures \ref{fig:eggirl} and \ref{fig:mpvrgirl} provide a comparison of the proposed methods.
+Additional results for all considered methods on another image are presented in Figures \ref{fig:egluvr}, \ref{fig:mpvrluvr} in \ref{A}. 
+
+\vspace{-3mm}
+\begin{center}
+\includegraphics[width=0.83\linewidth]{plots/vr_ref_eg_second.pdf}
+\vspace{-4mm}
+\captionof{figure}{\textsc{Extragradient} convergence on image with $\sigma = 0.05$ on the problem \eqref{problem_denoising}.}
+\label{fig:eggirl}
+\end{center}
+\vspace{-4mm}
+\begin{center}
+\includegraphics[width=0.83\linewidth]{plots/vr_ref_second.pdf}
+\vspace{-4mm}
+\captionof{figure}{\textsc{Extragradient} with VR convergence on image with $\sigma = 0.05$ on the problem \eqref{problem_denoising}.}
+\label{fig:mpvrgirl}
+\end{center}
+\vspace{-3mm}
+Comparing the images, it is evident that algorithms incorporating shuffling perform better than those that do not, even if the difference in the line graphs is subtle. Thus, using shuffling techniques allows us to achieve better results in solving such an important practical application as image denoising.
+%\vspace{-4mm}
+\subsection{Adversarial training}
+
+Next, we address an adversarial training problem. We can formulate it in the following way: 
+
+\vspace{-2mm}
+\begin{equation} \label{problem_adversarial}
+\min_{w \in \mathbb{R}^d} \max_{\|r_i\| \leqslant D} \left[\frac{1}{2N} \sum \limits_{i=1}^N \left( w^T\left(x_i+r_i\right) - y_i\right) ^2 + \frac{\lambda}{2} \|w\|^2 -\frac{\beta}{2}\|r\|^2\right],
+\end{equation}
+where the samples corresponds to features $x_i$ and targets $y_i$. We evaluate this issue across several datasets: \texttt{mushrooms}, \texttt{a9a}, and \texttt{w8a}, sourced from the \textsc{LIBSVM} library \citep{chang2011libsvm}. A brief description of these datasets is provided in Table \ref{tab:dataset-summary}, \ref{A}. The results are presented in Figure \ref{fig:adversarial}.
+\begin{center}
+\centering
+\begin{tabular}{ccc}
+\includegraphics[width=0.3\textwidth]{plots/mushrooms.pdf} &
+\includegraphics[width=0.3\textwidth]{plots/a9a.pdf} &
+\includegraphics[width=0.3\textwidth]{plots/w8a.pdf} 
+\end{tabular}
+\captionof{figure}{Extragradient with and without VR compared using various shuffling heuristics on \texttt{mushrooms}, \texttt{a9a} and \texttt{w8a} datasets on the problem \eqref{problem_adversarial}.}
+\label{fig:adversarial}
+\end{center}
+
+As shown on plots, \textsc{Extragradient} and \textsc{Extragradient} with the VR algorithms using the independent choice of indexes demonstrate worse performance compared to those using shuffling methods. In these series of experiments, the RR exhibits better performance than other shuffling methods and significantly outperforms the non-shuffled versions.
+
+% \subsection{Technical details}
+
+% Our implementation is developed in Python 3.10. We simulate a distributed system on a single server. The server is equipped with an AMD EPYC 7513 32-Core Processor running at 2.6 GHz, four Nvidia A100 SXM4 40GB, and two A100 SXM4 80GB. This configuration is used for the experiments described in Section \ref{sec:experiments}.
+
+\bibliographystyle{plainnat}
+\bibliography{refs}  
+\addcontentsline{toc}{section}{References}
+
+\newpage
+
+\appendix
+\part*{Appendix}
+\tableofcontents
+\newpage
+
+\section{Additional Experiments}\label{A}
+
+In this section, we present additional experiments that have been performed. Similar to the previous experiments, we observe a consistent pattern: methods incorporating shuffling techniques outperform those without shuffling. These results further confirm the effectiveness of shuffling techniques in solving the denoising problem on another image with higher $\sigma$.
+\begin{center}
+\includegraphics[width=0.9\linewidth]{plots/vr_ref_eg.pdf}
+\captionof{figure}{\textsc{Extragradient} convergence on image with  $\sigma = 0.1$ on the problem \eqref{problem_denoising}.}
+\label{fig:egluvr}
+\end{center}
+\begin{center}
+\includegraphics[width=0.9\linewidth]{plots/vr_ref.pdf}
+\captionof{figure}{\textsc{Extragradient} with VR convergence on image with $\sigma = 0.1$ on the problem \eqref{problem_denoising}.}
+\label{fig:mpvrluvr}
+\end{center}
+
+The datasets used for the experiments on the adversarial training include \texttt{mushrooms}, \texttt{a9a}, and \texttt{w8a}. These datasets vary in size and complexity, providing a comprehensive evaluation of our proposed algorithms in the context of adversarial training.
+\begin{table}[!htbp]
+    \centering
+    \begin{tabularx}{\textwidth}{lXXX}
+        \toprule
+        \textbf{Name} & \begin{tabular}{@{}l@{}}
+\textbf{Number of} \\
+\textbf{Instances}
+\end{tabular} & \begin{tabular}{@{}l@{}}
+\textbf{Number of} \\
+\textbf{Features}
+\end{tabular} & \begin{tabular}{@{}l@{}}
+\textbf{Number of} \\
+\textbf{Classes}
+\end{tabular} \\
+        \midrule
+        \texttt{mushrooms} & 8,124 & 112 & 2 \\
+        \texttt{a9a} & 32,561 & 123 & 2 \\
+        \texttt{w8a} & 49,749 & 300 & 2 \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Summary of Datasets}
+    \label{tab:dataset-summary}
+\end{table}
+
+\section{Basic Inequalities}
+
+For all vectors \( x, y, \{x_i\}_{i=1}^n \) in \( \mathbb{R}^d \) with a positive scalar \( \alpha \), the following holds:
+\begin{align}
+\label{bi:1} \tag{Scalar} \langle x, y \rangle ~ & \leqslant ~ \frac{\|x\|^2}{2\alpha} + \frac{\alpha \|y\|^2}{2}, \\
+\label{bi:quadr} \tag{Norm} 2\langle x, y \rangle ~ & = ~ \|x+y\|^2 - \|x\|^2 - \|y\|^2, \\
+\label{bi:quadrineq} \tag{CS} -2\|x\|^2 ~ & \leqslant ~ -\|x+y\|^2 + 2\|y\|^2, \\
+\label{bi:CauchySchwarz} \tag{Sum}  \left\|\sum_{i=1}^{n} x_i\right\|^2 & \leqslant  ~n \sum_{i=1}^{n} \|x_i\|^2,\\
+\label{bi:Prox} \tag{Prox}  \left\|\text{prox}_{\gamma g} (x) - \text{prox}_{\gamma g} (y)\right\|^2 & \leqslant  \left\|x-y\right\|^2.
+\end{align}
+
+\section{Extragradient}\label{E}
+\textbf{Theorem \ref{th:eg}.}
+\textit{Suppose Assumptions \ref{as:lipschitz}, \ref{as:monotone} hold. Then for Algorithms \ref{alg:rrextragrad}, \ref{alg:soextragrad} with $\gamma\leqslant \min \left\{\frac{1}{2\mu n}, \frac{1}{6L} \right\}$ after $S$ epochs,}
+    \begin{equation*}
+        \|z_S^n - z^*\|^2 \leqslant (1 - \frac{\gamma\mu}{2})^{Sn} \|z^0_0 - z^*\|^2 +  \frac{256\gamma n^2\sigma^2_*}{\mu}.
+    \end{equation*}
+
+    \begin{proof}
+
+         We start with the standard prox-inequality:
+        \begin{equation}\label{ineq:prox}
+            \hat{z} = \text{prox}_{g}(z) \Longleftrightarrow \langle \hat{z} - z, u - \hat{z}\rangle \geqslant g(\hat{z}) - g(u), \quad\forall u\in \mathcal{Z}.
+        \end{equation}
+        Substituting both steps of Algorithm \ref{alg:rrextragrad} (Algorithm \ref{alg:soextragrad}) into \eqref{ineq:prox}, we derive:
+        \begin{align*}
+            \langle z_s^{t+1} - z_s^t + \gamma F_{\pi_s^t}(z_s^{t+\nicefrac{1}{2}}), z^* - z_s^{t+1}\rangle &\geqslant \gamma(g(z_s^{t+1}) - g(z^*)),\\
+            \langle z_s^{t+\nicefrac{1}{2}} - z_s^t + \gamma F_{\pi_s^t}(z_s^t), z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\rangle &\geqslant \gamma(g(z_s^{t+\nicefrac{1}{2}}) - g(z_s^{t+1})).
+        \end{align*}
+        Summing inequalities, we get:
+        \begin{align*}
+        \gamma(g(z_s^{t+\nicefrac{1}{2}}) - g(z^*)) & \leqslant 
+            \langle z_s^{t+1} - z_s^t, z^* - z_s^{t+1}\rangle+ \langle z_s^{t+\nicefrac{1}{2}} - z_s^t, z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\rangle  \\
+            &\quad +\gamma\langle F_{\pi_s^t}(z_s^{t+\nicefrac{1}{2}}), z^* - z_s^{t+1}\rangle + \gamma\langle F_{\pi_s^t}(z_s^t), z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\rangle .
+        \end{align*}
+        Now, we add and subtract $z_s^{t+\nicefrac{1}{2}}$ to the right part of the third scalar product. Thus, rearranging terms, we arrive at:
+        \begin{align}
+           \notag\gamma(g(z_s^{t+\nicefrac{1}{2}}) - g(z^*)) & \leqslant  \langle z_s^{t+1} - z_s^t, z^* - z_s^{t+1}\rangle + \langle z_s^{t+\nicefrac{1}{2}} - z_s^t, z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\rangle \\
+           \notag& \quad+\gamma\langle F_{\pi_s^t}(z_s^{t+\nicefrac{1}{2}}), z^* - z_s^{t+\nicefrac{1}{2}}\rangle \\
+           \label{t1:ineq5}& \quad+ \gamma\langle F_{\pi_s^t}(z_s^{t+\nicefrac{1}{2}}) - F_{\pi_s^t}(z_s^t), z_s^{t+\nicefrac{1}{2}} - z_s^{t+1}\rangle .
+        \end{align}
+        We want to rewrite two first scalar products.  We use \eqref{bi:quadr}. Thus, we come to:
+        \begin{align*}
+            2\langle z_s^{t+1} - z_s^t, z^* - z_s^{t+1}\rangle &= \|z_s^{t} - z^*\|^2 - \| z_s^{t+1} - z_s^t\|^2 - \|z^* - z_s^{t+1}\|^2,\\
+            2\langle z_s^{t+\nicefrac{1}{2}} - z_s^t, z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\rangle &= \|z_s^{t+1} - z_s^t\|^2 - \|z_s^{t+\nicefrac{1}{2}} - z_s^t\|^2 - \|z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\|^2.
+        \end{align*}
+        Substituting this to \eqref{t1:ineq5}, we get:
+        \begin{align*}
+            \|z_s^{t+1} - z^*\|^2 &\leqslant \|z_s^t - z^*\|^2 - 2\gamma\left(\langle F_{\pi_s^t}(z_s^{t+\nicefrac{1}{2}}), z_s^{t+\nicefrac{1}{2}} - z^*\rangle + g(z_s^{t+\nicefrac{1}{2}}) - g(z^*) \right) \\
+            & \quad + 2\gamma\langle F_{\pi_s^t}(z_s^{t+\nicefrac{1}{2}}) - F_{\pi_s^t}(z_s^t), z_s^{t+\nicefrac{1}{2}} - z_s^{t+1}\rangle \\
+            & \quad - \|z_s^{t+\nicefrac{1}{2}} - z_s^t\|^2 - \|z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\|^2.
+        \end{align*}
+        Now, applying \eqref{bi:1} and Assumption \ref{as:lipschitz} to the second scalar product, we obtain:
+        \begin{align}
+            \notag\|z_s^{t+1} - z^*\|^2 &~\leqslant ~\|z_s^t - z^*\|^2 - 2\gamma\bigl(\langle F_{\pi_s^t}(z_s^{t+\nicefrac{1}{2}}), z_s^{t+\nicefrac{1}{2}} - z^*\rangle\\
+            \notag
+            & ~~\quad + ~ g(z_s^{t+\nicefrac{1}{2}}) - g(z^*) \bigr) + \gamma^2\|F_{\pi_s^t}(z_s^{t+\nicefrac{1}{2}}) - F_{\pi_s^t}(z_s^t)\|^2\\
+            \notag
+            & ~~\quad + ~ \|z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\|^2 - \|z_s^{t+\nicefrac{1}{2}} - z_s^t\|^2 - \|z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\|^2\\
+            \notag
+            &\overset{\text{Ass.} \ref{as:lipschitz}}{\leqslant} \|z_s^t - z^*\|^2 + \left(\gamma^2 L^2 - 1\right) \|z_s^{t+\nicefrac{1}{2}} - z_s^t\|^2 \\
+            \label{t1:ineq1}
+            &~~~~~ - 2\gamma\left(\underbrace{\langle F_{\pi_s^t}(z_s^{t+\nicefrac{1}{2}}), z_s^{t+\nicefrac{1}{2}} - z^*\rangle + g(z_s^{t+\nicefrac{1}{2}}) - g(z^*)}_{T_1} \right).
+        \end{align}
+        To estimate the $T_1$ term, we take the expectation:
+        \begin{align*}
+            \mathbb{E} T_1 & ~~~ = ~~~\mathbb{E}\langle F_{\pi_s^t}(z_s^{t+\nicefrac{1}{2}}), z_s^{t+\nicefrac{1}{2}} - z^*\rangle +  g(z_s^{t+\nicefrac{1}{2}}) -  g(z^*) \\
+            &~~~= ~~~\mathbb{E} \langle F_{\pi_s^t}(z_s^{t+\nicefrac{1}{2}}) - F_{\pi_s^t}(z^*), z_s^{t+\nicefrac{1}{2}} - z^*\rangle \\
+            & ~~~ \quad\quad + ~\mathbb{E}\langle F_{\pi_s^t}(z^*), z_s^{t+\nicefrac{1}{2}} - z^*\rangle + g(z_s^{t+\nicefrac{1}{2}}) -g(z^*)\\
+            &~~\overset{\text{Ass.} \ref{as:monotone}}{\geqslant} ~~\mu \mathbb{E} \|z_s^{t+\nicefrac{1}{2}} - z^*\|^2 + \mathbb{E} \langle F_{\pi_s^t}(z^*), z_s^{t+\nicefrac{1}{2}} - z_s^0\rangle \\
+            & ~~~ \quad\quad + ~ \mathbb{E} \langle F_{\pi_s^t}(z^*), z_s^0 - z^*\rangle + g(z_s^{t+\nicefrac{1}{2}}) - g(z^*).
+        \end{align*}
+        Now we pay attention to the second scalar product. Using tower property and unbiasedness of stochastic operator at the points $z_s^0$ and $z^*$, we have $\mathbb E\left[\mathbb E_t\left[F_{\pi_s^t}(z^*)|z_s^0 - z^*\right]\right] = F(z^*)$. Thus, we continue the estimation of $\mathbb E T_1$:
+        \begin{align*}
+            \mathbb{E} T_1 &\overset{\eqref{bi:1}}{\geqslant} \mu \mathbb{E} \|z_s^{t+\nicefrac{1}{2}} - z^*\|^2 -  \frac{\gamma}{2\beta}\mathbb{E}\|F_{\pi_s^t}(z^*)\|^2 -  \frac{\beta}{2\gamma}\mathbb{E}\|z_s^{t+\nicefrac{1}{2}} - z_s^0\|^2 \\
+            &~~ \quad ~~~+  \langle F(z^*), z_s^0 - z^*\rangle + g(z_s^{t+\nicefrac{1}{2}}) - g(z^*) \\
+            &~~ = \quad  \mu\mathbb{E}  \|z_s^{t+\nicefrac{1}{2}} - z^*\|^2 - \frac{\gamma}{2\beta}\mathbb{E}\|F_{\pi_s^t}(z^*)\|^2 - \frac{\beta}{2\gamma}\mathbb{E}\|z_s^{t+\nicefrac{1}{2}} - z_s^0\|^2\\
+            &~~ \quad ~~~+ \langle F(z^*), z_s^0 - z_s^{t+\nicefrac{1}{2}}\rangle + \underbrace{\langle F(z^*), z_s^{t+\nicefrac{1}{2}} - z^*\rangle + g(z_s^{t+\nicefrac{1}{2}}) - g(z^*)}_{\geqslant 0 ~\eqref{eq:vi_setting}}\\
+            &\overset{\eqref{bi:1}}{\geqslant} \mu \mathbb{E} \|z_s^{t+\nicefrac{1}{2}} - z^*\|^2 - \frac{\gamma}{2\beta} \mathbb{E}\|F_{\pi_s^t}(z^*)\|^2 \\
+            & ~~ \quad ~~~- \frac{\gamma}{2\beta}\|F(z^*)\|^2 - \frac{\beta}{\gamma}\mathbb{E}\|z_s^{t+\nicefrac{1}{2}} - z_s^0\|^2.
+        \end{align*}
+        Here we introduced $\beta > 0$, which we will define later. Substituting this inequality into \eqref{t1:ineq1}, we obtain:
+        \begin{align}
+            \notag \mathbb E\|z_s^{t+1} - z^*\|^2  & ~ \quad \leqslant \quad ~ \mathbb E\|z_s^t - z^*\|^2 - 2\gamma\mu \mathbb E\|z_s^{t+\frac{1}{2}} - z^*\|^2 \\
+            \notag
+            &\quad \quad \quad ~~+ (\gamma^2 L^2 - 1)\mathbb E\|z_s^{t+\frac{1}{2}} - z_s^t\|^2 + \frac{\gamma^2}{\beta}\mathbb E \|F_{\pi_s^t}(z^*)\|^2 \\
+            \notag
+            & \quad \quad \quad ~~+ \frac{\gamma^2}{\beta} \|F(z^*)\|^2 + 2\beta\mathbb E\|z_s^{t+\frac{1}{2}} - z_s^0\|^2\\
+            \notag
+            &\overset{(\text{Ass.} \ref{as:bound}, \ref{bi:quadrineq})}{\leqslant}(1 - \gamma\mu)\mathbb E\|z_s^t - z^*\|^2 + \frac{2\gamma^2}{\beta}\sigma_*^2 + 2\beta\mathbb E\|z_s^{t+\frac{1}{2}} - z_s^0\|^2 \\
+            \label{t1:ineq2}
+            &\quad \quad \quad ~~+ (\gamma^2 L^2 + 2\gamma\mu - 1)\mathbb E\|z_s^{t+\frac{1}{2}} - z_s^t\|^2.
+        \end{align}
+        Now, we evaluate the $\|z_s^{t+\frac{1}{2}} - z_s^0\|^2$ term:
+        \begin{align}
+            \notag\|z_s^{t+\frac{1}{2}} - z_s^0\|^2 &~~\leqslant \left(1 + \frac{1}{a}\right)\|z_s^{t + \frac{1}{2}} - z_s^t\|^2 + (1 + a)\|z_s^t - z_s^0\|^2 \\
+            \notag &~~\leqslant \left(1 + \frac{1}{a}\right)\|z_s^{t + \frac{1}{2}} - z_s^t\|^2 + (1 + a)\left(1 + \frac{1}{b}\right)\|z_s^t - z_s^{t - \frac{1}{2}}\|^2 \\
+            \notag & ~~\quad + (1 + a)(1 + b)\|z_s^{t - \frac{1}{2}} - z_s^0\|^2 \\
+            \notag &~~= \left(1 + \frac{1}{a}\right)\|z_s^{t + \frac{1}{2}} - z_s^t\|^2 \\
+            \notag &~~\quad + (1 + a)\left(1 + \frac{1}{b}\right)\Bigl\|\text{prox}_{\gamma g}\left(z_s^{t-1} -\gamma F_{\pi_s^t}(z_s^{t - \frac{1}{2}})\right) \\
+            \notag & ~~\quad- \text{prox}_{\gamma g}\left(z_s^{t-1} - \gamma F_{\pi_s^t}(z_s^{t - 1})\right)\Bigr\|^2 + (1 + a)(1 + b)\|z_s^{t - \frac{1}{2}} - z_s^0\|^2 \\
+            \notag &\overset{\eqref{bi:Prox}}{\leqslant} \left(1 + \frac{1}{a}\right)\|z_s^{t + \frac{1}{2}} - z_s^t\|^2 \\
+            \notag &~~\quad + (1 + a)\left(1 + \frac{1}{b}\right)\left\|\gamma F_{\pi_s^t}(z_s^{t - \frac{1}{2}}) - \gamma F_{\pi_s^t}(z_s^{t - 1})\right\|^2 \\
+            \notag &~~\quad + (1 + a)(1 + b)\|z_s^{t - \frac{1}{2}} - z_s^0\|^2 \\
+            \notag &~~\leqslant \left(1 + \frac{1}{a}\right)\|z_s^{t + \frac{1}{2}} - z_s^t\|^2 \\
+            \notag &~~\quad + (1 + a)\left(1 + \frac{1}{b}\right)\gamma^2 L^2\|z_s^{t - \frac{1}{2}} - z_s^{t - 1}\|^2 \\
+            \notag &~~\quad + (1 + a)(1 + b)\|z_s^{t - \frac{1}{2}} - z_s^0\|^2 \\
+            \notag &~~\leqslant \left(1 + \frac{1}{a}\right)\|z_s^{t+\frac{1}{2}} - z_s^t\|^2 + \sum\limits_{i = 1}^{t-1}\|z_s^{i+\frac{1}{2}} - z_s^i\|^2  \\
+            \notag &~~\quad ~ \cdot \left(\left(1+\frac{1}{a}\right)(1+a)(1+b) + (1+a)\left(1+\frac{1}{b}\right)\gamma^2 L^2 \right)\\
+            \notag &~~\quad ~ \cdot \left[(1+a)(1+b)\right]^{t-1-i} \\
+            \label{t1:ineq6}& ~~\quad + \left((1+a)\left(1+\frac{1}{b}\right)  + 1\right)\left[(1+a)(1+b)\right]^t\|z_s^{\frac{1}{2}} - z_s^0\|^2.
+        \end{align}
+        We choose $a = b = \frac{1}{n}$ and consider coefficients before all three terms.
+        \begin{align*}
+            1 + \frac{1}{a} &= 1 + n,\\
+            \left(\left(1 + \frac{1}{a}\right) + \frac{1}{b}\gamma^2 L^2\right)\left[(1+a)(1+b)\right]^{t-i} &= (1 + n + n\gamma^2 L^2)\left(1 + \frac{1}{n}\right)^{2(t-i)},\\
+            \left((1+a)\left(1+\frac{1}{b}\right)+1\right)\left[(1+a)(1+b)\right]&^{t-i}\bigg|_{i = 0} \\
+            &= \left(3 + \frac{1}{n} + n\right)\left(1 + \frac{1}{n}\right)^{2(t-i)}\bigg|_{i = 0}.
+        \end{align*}
+        We can evaluate the smaller terms from above by the biggest one and write them into one sum. Thus, \eqref{t1:ineq6} transforms to
+        \begin{equation*}
+            \|z_s^{t+\frac{1}{2}} - z_s^0\|^2 \leqslant\sum\limits_{i = 0}^t \|z_s^{i + \frac{1}{2}} - z_s^i\|^2\left(1 + n + n\gamma^2 L^2\right)\left(1 + \frac{1}{n}\right)^{2(t-i)}.
+        \end{equation*}
+      Let us substitute the obtained inequality into \eqref{t1:ineq2}.
+        \begin{align}
+            \notag
+            \mathbb{E} \|z_s^{t+1} - z^*\|^2 & \leqslant (1 - \gamma\mu)\mathbb{E} \|z_s^t - z^*\|^2 + (\gamma^2 L^2 + 2\gamma\mu - 1)\mathbb{E} \|z_s^{t+\frac{1}{2}} - z_s^t\|^2 ~ \\
+            \label{t1:ineq4}
+            + \frac{2\gamma^2}{\beta}\sigma_*^2 + 2&\beta \sum\limits_{i = 0}^t \mathbb{E} \|z_s^{i + \frac{1}{2}} - z_s^i\|^2\left(1 + n + n\gamma^2 L^2\right)\left(1 + \frac{1}{n}\right)^{2(t-i)}.
+        \end{align}
+        Now we define new sequence that contains iteration points in all epochs:
+        \begin{equation*}
+            \widetilde{z}_k = z_{t+sn}.
+        \end{equation*}
+        Thus, additionally considering $\left(1+\frac{1}{n}\right)^{2(t-i)} \leqslant \left(1+\frac{1}{n}\right)^{2n} \leqslant e^2 \leqslant 8$, we can rewrite \eqref{t1:ineq4} in the following form:
+        \begin{align*}
+            \mathbb{E} \|\widetilde{z}_{k+1} - z^*\|^2 & \leqslant (1 - \gamma\mu)\mathbb{E} \|\widetilde{z}_k - z^*\|^2 + (\gamma^2 L^2 + 2\gamma\mu - 1)\mathbb{E} \|\widetilde{z}_{k+\frac{1}{2}} - \widetilde{z}_k\|^2 ~ \\
+            &\quad + \frac{2\gamma^2}{\beta}\sigma_*^2 + 16\beta \sum\limits_{i = 0}^n \mathbb{E} \|\widetilde{z}_{k - i + \frac{1}{2}} - \widetilde{z}_{k-i}\|^2\left(1 + n + n\gamma^2 L^2\right).
+        \end{align*}
+        Let us pay attention to the $\sum\limits_{i = 0}^n \mathbb{E} \|\widetilde{z}_{k - i + \frac{1}{2}} - \widetilde{z}_{k-i}\|^2$ term in the obtained inequality. For the original sequence, this term represented the sum of the norms from the beginning of the current epoch to the current iteration $t$ and could contain a maximum of $n$ terms. Thus, a new expression that contains the sum of $n$ norms up to the current iteration $k$ is an upper bound and our expression is correct.
+        Now we define $p_k = p^k = \left(1 - \frac{\gamma\mu}{2}\right)^{-k}$ and summarize both sides over all iterations with coefficients $p_k$:
+        \begin{align}
+        \notag
+        \sum\limits_{k = 0}^{Sn-1} p_k\mathbb{E} \|\widetilde{z}_{k+1} - z^*\|^2 & \leqslant (1 - \gamma\mu)\sum\limits_{k = 0}^{Sn-1} p_k\mathbb{E} \|\widetilde{z}_k - z^*\|^2 \\
+        \notag
+        & \quad + (\gamma^2 L^2 + 2\gamma\mu - 1)\sum\limits_{k = 0}^{Sn-1} p_k\mathbb{E} \|\widetilde{z}_{k+\frac{1}{2}} - \widetilde{z}_k\|^2 \\
+        \notag
+        & \quad + \sum\limits_{k = 0}^{Sn-1} p_k\sum\limits_{i = 0}^n \mathbb{E} \|\widetilde{z}_{k - i + \frac{1}{2}} - \widetilde{z}_{k-i}\|^2\\
+        \label{t1:ineq3}
+        & \quad \cdot 16\beta\left(1 + n + n\gamma^2 L^2\right) + \frac{2\gamma^2\sigma_*^2}{\beta}\sum\limits_{k = 0}^{Sn-1}p_k.
+        \end{align}
+        Now we need to estimate the following term:
+        \begin{align*}
+            \sum\limits_{k = 0}^{Sn-1} p_k\sum\limits_{i = 0}^n \mathbb{E} \|\widetilde{z}_{k - i + \frac{1}{2}} - \widetilde{z}_{k-i}\|^2 &\leqslant p_n \sum\limits_{k = 0}^{Sn-1} \sum\limits_{i = 0}^n p_{k-i}\mathbb{E} \|\widetilde{z}_{k - i + \frac{1}{2}} - \widetilde{z}_{k-i}\|^2 \\
+            &\leqslant p_n n \sum\limits_{k = 0}^{Sn-1} p_k\mathbb{E} \|\widetilde{z}_{k + \frac{1}{2}} - \widetilde{z}_k\|^2.
+        \end{align*}
+        Note that we define points $\widetilde{z}_{-n}, \widetilde{z}_{-n+\frac{1}{2}}, \ldots, \widetilde{z}_{-\frac{1}{2}}$ by shifting the sequence $\{\widetilde{z}_k\}$ on $n$ points. Since $p_n = \left(1 - \frac{\gamma\mu}{2}\right)^{-n} = \left(1 - \frac{\gamma\mu n}{2n}\right)^{-n} \leqslant e^{\frac{\gamma\mu n}{2}}$, we choose $\gamma \leqslant \frac{1}{2\mu n}$ and obtain $p_n \leqslant e^{\frac{1}{4}} \leqslant 2$. Substituting this into \eqref{t1:ineq3}, we obtain:
+        \begin{align*}
+            \sum\limits_{k = 0}^{Sn-1} p_k\mathbb{E} \|\widetilde{z}_{k+1} - z^*\|^2 & \leqslant (1 - \gamma\mu)\sum\limits_{k = 0}^{Sn-1} p_k\mathbb{E} \|\widetilde{z}_k - z^*\|^2 + \frac{2\gamma^2\sigma_*^2}{\beta}\sum\limits_{k = 0}^{Sn-1}p_k \\
+            & \quad + (\gamma^2 L^2 + 2\gamma\mu - 1)\sum\limits_{k = 0}^{Sn-1} p_k\mathbb{E} \|\widetilde{z}_{k+\frac{1}{2}} - \widetilde{z}_k\|^2 \\
+            & \quad + 32\beta\left(1 + n + n\gamma^2 L^2\right)n\sum\limits_{k = 0}^{Sn-1} p_k \mathbb{E} \|\widetilde{z}_{k + \frac{1}{2}} - \widetilde{z}_k\|^2.
+        \end{align*}
+        We consider the coefficient before $\sum\limits_{k = 0}^{Sn-1} p_k\mathbb E\|\widetilde{z}_{k+\frac{1}{2}} - \widetilde{z}_k\|^2$ and we make it negative  by selecting $\gamma$ and $\beta$.
+        \begin{gather*}
+            32\beta(1 + n + n\gamma^2 L^2)n + \gamma^2 L^2 + 2\gamma\mu - 1 \leqslant 0
+        \end{gather*}
+        We need $\gamma\leqslant\frac{1}{6L}, \beta = \frac{1}{64n^2}.$ Then to satisfy the previous estimate on gamma we finally put $\gamma \leqslant \min\left\{\frac{1}{2\mu n}, \frac{1}{6L}\right\}$ and, assuming $n > 3$, have $$\frac{1}{2n} + \frac{1}{2} + \frac{1}{72} + \frac{1}{36} + \frac{1}{3} - 1 \leqslant 0.$$
+        In this way,
+        \begin{equation*}
+            \sum\limits_{k = 0}^{Sn-1} p_k\mathbb{E} \|\widetilde{z}_{k+1} - z^*\|^2\leqslant (1 - \gamma\mu)\sum\limits_{k = 0}^{Sn-1} p_k\mathbb{E} \|\widetilde{z}_k - z^*\|^2 +  \frac{2\gamma^2\sigma_*^2}{\beta}\sum\limits_{k = 0}^{Sn-1}p_k.
+        \end{equation*}
+        Thus, substituting definition of $p_t$, we obtain:
+        \begin{align*}
+            \sum\limits_{k = 0}^{Sn-1} \left(1-\frac{\gamma\mu}{2}\right)^{-k}\mathbb{E} \|\widetilde{z}_{k+1} - z^*\|^2 & \leqslant \sum\limits_{k = 0}^{Sn-1} \left(1-\frac{\gamma\mu}{2}\right)^{-k + 1}\mathbb{E} \|\widetilde{z}_k - z^*\|^2 \\
+            & \quad + \frac{2\gamma^2\sigma_*^2}{\beta}\sum\limits_{k = 0}^{Sn-1}\left(1-\frac{\gamma\mu}{2}\right)^{-k},\\
+            \left(1-\frac{\gamma\mu}{2}\right)^{-(Sn-1)}\mathbb{E} \|\widetilde{z}_{Sn} - z^*\|^2 & \leqslant \left(1-\frac{\gamma\mu}{2}\right)\mathbb{E} \|\widetilde{z}_0 - z^*\|^2 \\
+            & \quad + \frac{2\gamma^2\sigma_*^2}{\beta}\sum\limits_{k = 0}^{Sn-1}\left(1-\frac{\gamma\mu}{2}\right)^{-k},\\
+            \mathbb{E} \|\widetilde{z}_{Sn} - z^*\|^2 & \leqslant \left(1-\frac{\gamma\mu}{2}\right)^{Sn}\mathbb{E} \|\widetilde{z}_0 - z^*\|^2\\
+            & \quad + \frac{2\gamma^2\sigma_*^2}{\beta}\sum\limits_{k = 0}^{Sn-1}\left(1-\frac{\gamma\mu}{2}\right)^{Sn-k-1}\\
+            & = \left(1-\frac{\gamma\mu}{2}\right)^{Sn}\mathbb{E} \|\widetilde{z}_0 - z^*\|^2\\
+            & \quad + \frac{2\gamma^2\sigma_*^2}{\beta}\sum\limits_{k = 0}^{Sn-1}\left(1-\frac{\gamma\mu}{2}\right)^{k}.
+        \end{align*}
+        Finally, estimating geometric progression in the last term as $\sum\limits_{k = 0}^{Sn-1}\left(1-\frac{\gamma\mu}{2}\right)^{k} \leqslant \frac{2}{\gamma\mu}$, we can write the final statement of the theorem:
+        \begin{align*}
+            \mathbb{E} \|z_S^n - z^*\|^2 & \leqslant \left(1-\frac{\gamma\mu}{2}\right)^{Sn}\mathbb{E} \|z_0^0 - z^*\|^2 + \frac{4\gamma\sigma_*^2}{\beta\mu}\\
+            & = \left(1-\frac{\gamma\mu}{2}\right)^{Sn}\mathbb{E} \|z_0^0 - z^*\|^2 + \frac{256\gamma n^2\sigma_*^2}{\mu}.
+        \end{align*}
+    \end{proof}
+\textbf{Corollary \ref{cor:eg}.}
+\textit{Suppose Assumptions \ref{as:lipschitz}, \ref{as:monotone} hold. Then Algorithms \ref{alg:rrextragrad}, \ref{alg:soextragrad} with $\gamma \leqslant \min\left\{\frac{1}{2\mu n}, \frac{1}{6L}, \frac{2\log\left(\max\left\{2, \frac{\mu^2\|z_0^0 - z^*\|^2 T}{512 n^2\sigma^2_*}\right\}\right)}{\mu T}\right\}$, to reach $\varepsilon$-accuracy, where $\varepsilon \sim \|z_S^n - z^*\|^2$, needs}
+    \begin{equation*}
+    \mathcal{\widetilde{O}}\left(\left(n + \frac{L}{\mu}\right)\log\left(\frac{1}{\varepsilon}\right) + \frac{n^2\sigma^2_*}{\mu^2\varepsilon}\right) ~~\textit{iterations and oracle calls.}
+    \end{equation*}
+\begin{proof}
+    For the result obtained in Theorem \ref{th:eg}, we utilize Lemma 2 from \citep{stich2019unified} and, using special tuning of $\gamma$, such as $\gamma \leqslant \min\left\{\frac{1}{2\mu n}, \frac{1}{6L}, \frac{2\log\left(\max\left\{2, \frac{\mu^2\|z_0^0 - z^*\|^2 T}{512 n^2\sigma^2_*}\right\}\right)}{\mu T}\right\}$, we obtain that we need $\mathcal{\widetilde{O}}\left(\left(n + \frac{L}{\mu}\right)\log\left(\frac{1}{\varepsilon}\right) + \frac{n^2\sigma^2_*}{\mu^2\varepsilon}\right)$ iterations and oracle calls to reach $\varepsilon$-accuracy, where $\varepsilon \sim \|z_S^n - z^*\|^2$.
+\end{proof}
+
+
+\section{Extragradient with variance reduction}
+\textbf{Theorem \ref{th:proxegvr}.}
+\textit{Suppose that Assumptions \ref{as:lipschitz}, \ref{as:monotone} hold. Then for Algorithm \ref{alg:proxextragradvr} with $\gamma \leqslant\frac{(1-\alpha)\mu}{6L^2}, p = \frac{1}{n}$ and $V_s^t =\mathbb E \|z_s^t - z^*\|^2 + \mathbb E\|\omega_s^t - z^*\|^2$, after $T$ iterations we have}
+    \begin{equation*}
+        V_S^n \leqslant \left(1 - \frac{\gamma\mu}{4}\right)^T V_0^0.
+    \end{equation*}
+\begin{proof}
+    We start with substituting both steps of Algorithm \ref{alg:proxextragradvr} to \eqref{ineq:prox}:
+        \begin{align*}
+            \langle z_s^{t+1} - \overline{z}_s^t + \gamma \hat{F}(z_s^{t+\nicefrac{1}{2}}), z^* - z_s^{t+1}\rangle &\geqslant \gamma (g(z_s^{t+1}) - g(z^*)),\\
+            \langle z_s^{t+\nicefrac{1}{2}} - \overline{z}_s^t + \gamma F(\omega_s^t), z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\rangle &\geqslant \gamma (g(z_s^{t+\nicefrac{1}{2}}) - g(z_s^{t+1})).
+        \end{align*}
+        Let us summarize this two inequalities:
+        \begin{align*}
+        \gamma (g(z_s^{t+\nicefrac{1}{2}}) - g(z^*)) &\leqslant
+            \langle z_s^{t+1} - \overline{z}_s^t, z^* - z_s^{t+1}\rangle+ \langle z_s^{t+\nicefrac{1}{2}} - \overline{z}_s^t, z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\rangle\\
+            & \quad + \gamma\langle \hat{F}(z_s^{t+\nicefrac{1}{2}}), z^* - z_s^{t+1}\rangle + \gamma\langle F(\omega_s^t), z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\rangle .
+        \end{align*}
+        Now, we add and subtract $z_s^{t+\nicefrac{1}{2}}$ to the right part of the third scalar product. Thus, rearranging terms and utilizing the definition of $\hat{F}(z_s^{t+\nicefrac{1}{2}})$, we arrive at:
+        \begin{align}
+            \notag
+            &\underbrace{\langle z_s^{t+1} - \overline{z}_s^t, z^* - z_s^{t+1}\rangle}_{T_1} + \underbrace{\langle z_s^{t+\nicefrac{1}{2}} - \overline{z}_s^t, z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\rangle}_{T_2}\\
+            \notag
+            &\quad + \underbrace{\gamma\langle F_{\pi_s^t}(\omega_s^t) - F_{\pi_s^t}(z_s^{t+\nicefrac{1}{2}}), z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\rangle}_{T_3} \\
+            \label{t2:ineq1}
+            &\quad + \underbrace{\gamma\langle \hat{F}(z_s^{t+\nicefrac{1}{2}}), z^* - z_s^{t+\nicefrac{1}{2}}\rangle + \gamma (g(z^*) - g(z_s^{t+\nicefrac{1}{2}}))}_{T_4} \geqslant 0.
+        \end{align}
+        We defined terms as $T_1, T_2, T_3, T_4$, respectively. Let us estimate them separately. We start with $T_1$ and $T_2$. To estimate them, firstly, we use the definition of $\overline{z}_s^t$ and, secondly, use \eqref{bi:quadr}. Thus, we obtain:
+        \begin{align*}
+            2T_1 &= 2\langle z_s^{t+1} - \overline{z}_s^t, z^* - z_s^{t+1}\rangle \\
+            &= 2\alpha \langle z_s^{t+1} - z_s^t, z^* - z_s^{t+1}\rangle + 2(1-\alpha)\langle z_s^{t+1} - \omega_s^t, z^* - z_s^{t+1}\rangle\\
+            &= \alpha (\|z^* - z_s^t\|^2 - \|z_s^{t+1} - z_s^t\|^2 - \|z^* - z_s^{t+1}\|^2) \\
+            &\quad + (1-\alpha)(\|z^* - \omega_s^t\|^2 - \|z_s^{t+1} - \omega_s^t\|^2 - \|z^* - z_s^{t+1}\|^2)\\
+            &= \alpha \|z_s^t - z^*\|^2 - \|z_s^{t+1} - z^*\|^2 + (1-\alpha)\|\omega_s^t - z^*\|^2 \\
+            &\quad - \alpha \|z_s^{t+1} - z_s^t\|^2 - (1-\alpha) \|z_s^{t+1} - \omega_s^t\|^2.
+        \end{align*}
+        The same holds for $T_2$:
+        \begin{align*}
+            2T_2 &= 2\langle z_s^{t+\nicefrac{1}{2}} - \overline{z}_s^t, z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\rangle \\
+            &= 2\alpha \langle z_s^{t+\nicefrac{1}{2}} - z_s^t, z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\rangle + 2(1-\alpha)\langle z_s^{t+\nicefrac{1}{2}} - \omega_s^t, z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\rangle\\
+            &= \alpha (\|z_s^{t+1} - z_s^t\|^2 - \|z_s^{t+\nicefrac{1}{2}} - z_s^t\|^2 - \|z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\|^2) \\
+            &\quad + (1-\alpha)(\|z_s^{t+1} - \omega_s^t\|^2 - \|z_s^{t+\nicefrac{1}{2}} - \omega_s^t\|^2 - \|z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\|^2)\\
+            &= \alpha \|z_s^{t+1} - z_s^t\|^2 - \|z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\|^2 + (1-\alpha)\|z_s^{t+1} - \omega_s^t\|^2 \\
+            &\quad - \alpha \|z_s^{t+\nicefrac{1}{2}} - z_s^t\|^2 - (1-\alpha) \|z_s^{t+\nicefrac{1}{2}} - \omega_s^t\|^2.
+        \end{align*}
+        Now, we moving to the estimate of $T_3$:
+        \begin{align*}
+            2T_3 & ~~~= ~~~2\gamma\langle F_{\pi_s^t}(\omega_s^t) - F_{\pi_s^t}(z_s^{t+\nicefrac{1}{2}}), z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\rangle \\
+            &\overset{\eqref{bi:1}}{\leqslant} \frac{\gamma^2}{\tau}\|F_{\pi_s^t}(\omega_s^t) - F_{\pi_s^t}(z_s^{t+\nicefrac{1}{2}})\|^2 + \tau \|z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\|^2 \\
+            &~\overset{\eqref{bi:CauchySchwarz}}{\leqslant} ~\frac{\gamma^2 L^2}{\tau}\|z_s^{t+\nicefrac{1}{2}} - \omega_s^t\|^2 + \tau \|z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\|^2;
+        \end{align*}
+        Here we introduced $\tau > 0$, which we will define later. Last, we do the same for $T_4$:
+        \begin{align*}
+            2T_4 &\quad \quad=\quad \quad  2\gamma\langle \hat{F} (z_s^{t+\nicefrac{1}{2}}), z^* - z_s^{t+\nicefrac{1}{2}}\rangle + 2\gamma (g(z^*) - g(z_s^{t+\nicefrac{1}{2}}))\\
+            &\quad \quad =\quad \quad  2\gamma\langle \hat{F} (z_s^{t+\nicefrac{1}{2}}) - F(z_s^{t+\nicefrac{1}{2}}), z^* - z_s^{t+\nicefrac{1}{2}}\rangle \\
+            &\quad\quad \quad\quad\quad + 2\gamma\langle F (z_s^{t+\nicefrac{1}{2}}) - F(z^*), z^* - z_s^{t+\nicefrac{1}{2}}\rangle \\
+            &\quad \quad \quad \quad \quad + 2\gamma\left(\underbrace{\langle F(z^*), z^* - z_s^{t+\nicefrac{1}{2}}\rangle + g(z^*) - g(z_s^{t+\nicefrac{1}{2}})}_{\leqslant 0 ~\eqref{eq:vi_setting}}\right) \\
+            &\overset{(\ref{bi:1}, \text{Ass.} \ref{as:lipschitz})}{\leqslant} \frac{4\gamma^2 L^2}{\tau} \|z_s^{t+\nicefrac{1}{2}} - \omega_s^t\|^2 + \tau \|z_s^{t+\nicefrac{1}{2}} - z^*\|^2 \\
+            &\quad \quad \quad \quad \quad  - 2\gamma\langle F (z_s^{t+\nicefrac{1}{2}}) - F(z^*), z_s^{t+\nicefrac{1}{2}} - z^*\rangle\\
+            &\quad ~ \overset{(\text{Ass.} \ref{as:monotone})}{\leqslant} \quad ~ \frac{4\gamma^2 L^2}{\tau} \|z_s^{t+\nicefrac{1}{2}} - \omega_s^t\|^2 + \tau \|z_s^{t+\nicefrac{1}{2}} - z^*\|^2 - 2\gamma\mu\|z_s^{t+\nicefrac{1}{2}} - z^*\|^2. 
+        \end{align*}
+       Substituting all the obtained estimates into \eqref{t2:ineq1}, we arrive at:
+        \begin{align*}
+            0 &\leqslant \alpha \|z_s^t - z^*\|^2 - \|z_s^{t+1} - z^*\|^2 + (1-\alpha)\|\omega_s^t - z^*\|^2 - \alpha \|z_s^{t+1} - z_s^t\|^2 \\
+            &\quad - (1-\alpha) \|z_s^{t+1} - \omega_s^t\|^2 + \alpha \|z_s^{t+1} - z_s^t\|^2 - \|z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\|^2 \\
+            & \quad + (1-\alpha)\|z_s^{t+1} - \omega_s^t\|^2 - \alpha \|z_s^{t+\nicefrac{1}{2}} - z_s^t\|^2 - (1-\alpha) \|z_s^{t+\nicefrac{1}{2}} - \omega_s^t\|^2 \\
+            & \quad + \frac{\gamma^2 L^2}{\tau}\|z_s^{t+\nicefrac{1}{2}} - \omega_s^t\|^2 + \tau \|z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\|^2 +\frac{4\gamma^2 L^2}{\tau} \|z_s^{t+\nicefrac{1}{2}} - \omega_s^t\|^2 \\
+            & \quad + \tau \|z_s^{t+\nicefrac{1}{2}} - z^*\|^2 - 2\gamma\mu\|z_s^{t+\nicefrac{1}{2}} - z^*\|^2.
+        \end{align*}
+        By grouping the coefficients of the same terms, we get:
+        \begin{align}
+        \notag
+            \|z_s^{t+1} - z^*\|^2 &\leqslant \alpha \|z_s^t - z^*\|^2 + (1-\alpha)\|\omega_s^t - z^*\|^2 \\
+            \notag
+            & \quad + \left(\frac{5\gamma^2 L^2}{\tau} - (1-\alpha)\right) \|z_s^{t+\nicefrac{1}{2}} - \omega_s^t\|^2 - (1-\tau)\|z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\|^2 \\
+            \label{t2:ineq2}
+            & \quad - (2\gamma\mu - \tau)\|z_s^{t+\nicefrac{1}{2}} - z^*\|^2 - \alpha \|z_s^{t+\nicefrac{1}{2}} - z_s^t\|^2.
+        \end{align}
+        Now, we want to estimate the $- (2\gamma\mu - \tau)\|z_s^{t+\nicefrac{1}{2}} - z^*\|^2$ term. To do this we split it into two equal parts. To the first part we add and subtract $\omega_s^t$, and to the second -- $z_s^t$. After that we use \eqref{bi:quadrineq} for both terms:
+        \begin{align*}
+            - \left(2\gamma\mu - \tau\right)\|z_s^{t+\nicefrac{1}{2}} - z^*\|^2 &= - \left(\gamma\mu - \frac{\tau}{2}\right)\|z_s^{t+\nicefrac{1}{2}} - z^*\|^2 - \left(\gamma\mu - \frac{\tau}{2}\right)\|z_s^{t+\nicefrac{1}{2}} - z^*\|^2 \\
+            &= - \left(\gamma\mu - \frac{\tau}{2}\right)\|z_s^{t+\nicefrac{1}{2}} - \omega_s^t + \omega_s^t - z^*\|^2 \\
+            & \quad - \left(\gamma\mu - \frac{\tau}{2}\right)\|z_s^{t+\nicefrac{1}{2}} - z_s^t + z_s^t - z^*\|^2 \\
+            & \leqslant \left(\gamma\mu - \frac{\tau}{2}\right) \|z_s^{t+\nicefrac{1}{2}} - \omega_s^t\|^2 - \left(\frac{\gamma\mu}{2} - \frac{\tau}{4}\right)\|\omega_s^t - z^*\|^2 \\
+            &\quad+ \left(\gamma\mu - \frac{\tau}{2}\right) \|z_s^{t+\nicefrac{1}{2}} - z_s^t\|^2 - \left(\frac{\gamma\mu}{2} - \frac{\tau}{4}\right)\|z_s^t - z^*\|^2.
+        \end{align*}
+        Substituting this into \eqref{t2:ineq2},
+        \begin{align*}
+            \|z_s^{t+1} - z^*\|^2 &\leqslant \left(\alpha - \frac{\gamma\mu}{2} + \frac{\tau}{4}\right) \|z_s^t - z^*\|^2 + \left(1-\alpha - \frac{\gamma\mu}{2} + \frac{\tau}{4} \right)\|\omega_s^t - z^*\|^2 \\
+            &\quad + \left(\frac{5\gamma^2 L^2}{\tau} + \gamma\mu - \frac{\tau}{2} - (1-\alpha)\right) \|z_s^{t+\nicefrac{1}{2}} - \omega_s^t\|^2 \\
+            &\quad - (1-\tau)\|z_s^{t+1} - z_s^{t+\nicefrac{1}{2}}\|^2 + \left(\gamma\mu - \frac{\tau}{2} -\alpha \right)\|z_s^{t+\nicefrac{1}{2}} - z_s^t\|^2.
+        \end{align*}
+        We want to choose parameters such that coefficients before the last three terms would be non-positive. Let us start with $\|z_s^{t+\nicefrac{1}{2}} - \omega_s^t\|^2$ term. 
+        \begin{align*}
+            \text{We pick~}\tau &= \gamma\mu;\\
+            \text{We want~}1- \alpha &\geqslant \frac{5\gamma L^2}{\mu} + \frac{\gamma \mu}{2};\\
+            \text{It is enough for us that~}\gamma &\leqslant \frac{(1-\alpha)\mu}{6L^2}.
+         \end{align*}
+        Obviously, with this choice of $\gamma$ and $\alpha$, the last two terms are less than zero. In that way, we obtain:
+        \begin{equation*}
+            \|z_s^{t+1} - z^*\|^2 \leqslant \left(\alpha - \frac{\gamma\mu}{4}\right)\|z_s^t - z^*\|^2 + \left(1 - \alpha - \frac{\gamma\mu}{4}\right)\|\omega_s^t - z^*\|^2.
+        \end{equation*}
+        According to the condition for updating the point $\omega_s^t$,
+        \begin{equation*}
+            \mathbb E\|\omega_s^{t+1} - z^*\|^2 = p\|z_s^t - z^*\|^2 + (1-p)\|\omega_s^t - z^*\|^2.
+        \end{equation*}
+        In that way:
+        \begin{align*}
+            \mathbb E\|z_s^{t+1} - z^*\|^2 + \frac{1-\alpha}{p} \mathbb E\|\omega_s^{t+1} - z^*\|^2 &\leqslant \left(1 - \frac{\gamma\mu}{4}\right)\mathbb E\|z_s^t - z^*\|^2 \\
+            & \quad + \left((1-\alpha)\left(1 + \frac{1}{p} - 1\right) - \frac{\gamma\mu}{4}\right)\mathbb E\|\omega_s^{t+1} - z^*\|^2.
+        \end{align*}
+        Now we put $\alpha = 1 - p$ and obtain:
+        \begin{align*}
+            \mathbb E\|z_s^{t+1} - z^*\|^2 + \mathbb E\|\omega_s^{t+1} - z^*\|^2 \leqslant \left(1 - \frac{\gamma\mu}{4}\right)\left(\mathbb E\|z_s^t - z^*\|^2 + \mathbb E\|\omega_s^t - z^*\|^2\right).
+        \end{align*}
+        Denoting $V_s^t = \mathbb E\|z_s^t - z^*\|^2 + \mathbb E\|\omega_s^t - z^*\|^2$ and going into recursion over all epochs and iterations, we get:
+        \begin{equation*}
+            V_S^n \leqslant \left(1 - \frac{\gamma\mu}{4}\right)^T V_0^0,
+        \end{equation*}
+        where $T$ is the total number of iterations. 
+\end{proof}    
+\textbf{Corollary \ref{cor:proxegvr}}
+\textit{Suppose that Assumptions \ref{as:lipschitz}, \ref{as:monotone} hold. Then Algorithm \ref{alg:proxextragradvr} with $\gamma \leqslant\frac{(1-\alpha)\mu}{6L^2}, p = \frac{1}{n}$ and $V_s^t =\mathbb E \|z_s^t - z^*\|^2 + \mathbb E\|\omega_s^t - z^*\|^2$, to reach $\varepsilon$-accuracy, where $\varepsilon \sim V_S^n$, needs}
+\begin{align*}
+    &\mathcal{O}\left(n\frac{L^2}{\mu^2}\log\left(\frac{1}{\varepsilon}\right)\right) ~~\text{iterations and oracle calls.}
+    \end{align*}
+\begin{proof}   
+        Substituting estimation of $\gamma$ to the result of Theorem \ref{th:proxegvr} we obtain, that method to converge to $\varepsilon$-accuracy, where $\varepsilon = V_S^n$, needs $\mathcal{O}\left(\frac{L^2}{p\mu^2}\log\left(\frac{1}{\varepsilon}\right)\right)$ iterations. At the same time each iteration costs $pn + 2$ calls to $F_{\pi}$. Thus, we obtain $\mathcal{O}\left(\left(n\frac{L^2}{\mu^2} + \frac{L^2}{p\mu^2}\right)\log\left(\frac{1}{\varepsilon}\right)\right)$ oracle complexity. Finally, the optimal choice $p = \frac{1}{n}$ gives $\mathcal{O}\left(n\frac{L^2}{\mu^2}\log\left(\frac{1}{\varepsilon}\right)\right)$ iteration and oracle complexity. This ends the proof.
+\end{proof}
+
+\end{document}

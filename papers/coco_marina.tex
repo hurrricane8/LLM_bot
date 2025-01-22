@@ -1,0 +1,632 @@
+\documentclass{ProcISPRAS}
+
+% Page geometry. Nearly A5, but not exactly
+\usepackage[papersize={14.86cm,21cm},
+            left=1.5cm, % 1.4cm
+            right=1cm, % 1.5cm
+            top=0.8cm, % 0.5cm
+            bottom=1cm, % 1.5cm
+            includehead,
+            headheight=15pt,
+            heightrounded,
+            headsep=6pt, % 0.4cm
+            includefoot,
+            footskip=16pt,
+]{geometry}
+
+\addbibresource{arxiv.bib}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+% \hypersetup{
+%     colorlinks=false,         % Отключаем цветные ссылки
+%     linkbordercolor={1 0 0}, % Цвет рамки для ссылок
+%     citebordercolor={0.2 1 0.2}, % Цвет рамки для цитат
+%     urlbordercolor={0 0 1},  % Цвет рамки для URL
+%     pdfborder={1 1 1}        % Настройка границ PDF
+% }     % hyperlinks
+\usepackage{url}
+\usepackage{tikz}
+\usepackage{listings}
+\usetikzlibrary{positioning}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{lipsum}		% Can be removed after putting your text content
+\usepackage{graphicx}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}
+
+
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+%\usepackage{doi}
+\usepackage{mathtools}
+\usepackage{xspace}	
+\usepackage{amsthm}
+\usepackage{comment}
+\usepackage{amsmath,amssymb}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{etoolbox}
+\usepackage{tablefootnote}
+\usepackage{array, longtable}
+\usepackage[table]{xcolor}
+\usepackage{epigraph}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{threeparttable}
+\usepackage{wasysym}
+
+\floatstyle{ruled}
+\restylefloat{algorithm}
+
+\definecolor{maroon}{cmyk}{0,0.87,0.68,0.32}
+\definecolor{yellow}{cmyk}{0,0,1,0}
+\definecolor{mydarkred}{RGB}{192,47,25}
+\newcommand{\red}{\color{mydarkred}}
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+	
+\newtheorem{theorem}{Теорема}
+\newtheorem{corollary}{Следствие}
+\newtheorem{lemma}{Лемма}
+\newtheorem{assumption}{Предположение}
+\newtheorem{definition}{Определение}
+\newtheorem{remark}{Замечание}
+\newtheorem{example}{Пример}
+
+\newlist{assumlist}{enumerate}{1}
+\setlist[assumlist,1]{
+    label=(\alph*),
+    ref=\theassumption(\alph*),
+    align=left,
+    leftmargin=0.4cm
+}
+
+\def\R{\mathbb{R}}
+\def\W{\mathcal W}
+\def\C{\mathcal C}
+\def\X{\mathcal X}
+\def\Y{\mathcal Y}
+\def\M{\mathcal M_+^1}
+\def\R{\mathbb R}
+\def\N{\mathbb N}
+\def\EE{\mathbb E}
+\def\PP{\mathbb P}
+\def\Prob{\mathbb P}
+\def\D{\mathbb D}
+\def\U{\mathcal{U}}
+\def\V{\mathcal{V}}
+\def\cD{\mathcal{D}}
+\def\Z{\mathcal Z}
+
+\def\e{\varepsilon}
+\def\la{\langle}
+\def\ra{\rangle}
+\def\vp{f}
+\def\y{\mathbf{y}}
+\def\a{\mathbf{a}}
+\def\x{\mathbf{x}}
+%\def\w{\mathbf{w}}
+%\def\z{\mathbf{z}}
+\def\w{w}
+\def\z{z}
+\def\Rbf{\mathbf{R}}
+\def\one{{\mathbf 1}}
+
+\newcommand{\E}[1]{\mathbb{E}\left[#1\right]}
+\newcommand{\Ek}[1]{\mathbb{E}_k\left[#1\right]}
+\newcommand{\mI}{\mathbf{I}}
+\newcommand{\mA}{\mathbf{A}}
+\newcommand{\mB}{\mathbf{B}}
+\newcommand{\eqdef}{\vcentcolon=}
+\newcommand{\cK}{\mathcal{K}}
+\newcommand{\cO}{\mathcal{O}}
+\newcommand{\ds}{\displaystyle}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\normtwo}[1]{\left\| #1 \right\|_2}
+\newcommand{\angles}[1]{\left\langle #1 \right\rangle}
+\newcommand{\cbraces}[1]{\left( #1 \right)}
+\newcommand{\sbraces}[1]{\left[ #1 \right]}
+\newcommand{\braces}[1]{\left\{ #1 \right\}}
+\newcommand{\EndProof}{\begin{flushright}$\square$\end{flushright}}
+\DeclareMathOperator{\dom}{\mathrm{dom}}
+\newcommand{\prox}{\mathrm{prox}}
+\newcommand{\g}{\mathbf{g}}
+%\newcommand{\F}{\mathbf{F}}
+\newcommand{\F}{F}
+\newcommand{\sqnw}[1]{\sqn{#1}_{(\mWp\otimes\mI_d)}}
+\newcommand{\Lavg}{\overline{L}}
+\newcommand{\mW}{\mathbf{W}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\mWp}{\mathbf{W}^{\dagger}}
+\newcommand{\mP}{\mathbf{P}}
+\newcommand{\ones}{\mathbf{1}}
+
+\def\<#1,#2>{\langle #1,#2\rangle}
+\newcommand{\sqn}[1]{\norm{#1}^2}
+\newcommand{\sqN}[1]{\norm{#1}^2}
+
+
+\setcounter{secnumdepth}{2} %May be changed to 1 or 2 if section numbers are desired.
+
+\makeatletter
+\newcommand\fs@nocaptionruled{%\def\@fs@cfont{\bfseries}%
+  \let\@fs@capt\relax%\floatc@ruled
+  \def\@fs@pre{}%{\hrule height.8pt depth0pt \kern2pt}%
+  \def\@fs@post{\kern2pt\hrule\relax}%
+  \def\@fs@mid{\kern2pt\hrule\kern2pt}%
+  \let\@fs@iftopcapt\iftrue}
+\makeatother
+
+\newcommand{\blue}[1]{{\color{blue}#1}}
+
+% Настройка заголовка вручную
+\makeatletter
+\renewcommand{\fnum@algorithm}{\textbf{Алгоритм~\thealgorithm}}
+\makeatother
+
+\allowdisplaybreaks
+
+\usepackage{xargs}                      % Use more than one optional parameter in a new commands
+ 
+\usepackage[textsize=tiny]{todonotes}
+\newcommandx{\mt}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\mti}[2][1=]{\todo[inline,linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}} 
+
+\usepackage[T2A]{fontenc} 
+\usepackage[russian]{babel}
+
+\volhead{36}
+\issuehead{5}
+\pageshead{7-8}
+\yearhead{2024}
+
+\setcounter{page}{1} % Set first page number
+
+%\date{December 2024}
+
+\newauthor
+\inst{1,2}
+\authorname{Daniil Medyakov}{Даниил Медяков}
+\orcid{0009-0003-2007-8446}
+\email{mediakov.do@phystech.edu}
+
+\newauthor
+\inst{1,2}
+\authorname{Gleb Molodtsov}{Глеб Молодцов}
+% ORCID is optional
+\orcid{0009-0004-3516-1848}
+\email{molodtsov.gl@phystech.edu}
+
+\newauthor
+\inst{1,2,3}
+\authorname{Aleksandr Beznosikov}{Александр Безносиков}
+% ORCID is optional
+\orcid{0000-0002-3217-3614}
+\email{anbeznosikov@gmail.com}
+
+
+\affil[1]{
+Ivannikov Institute for System Programming of the RAS,\\
+25, Alexander Solzhenitsyn Str., Moscow, 109004, Russia}{Институт системного программирования им. В.П. Иванникова РАН,\\
+109004, Россия, г. Москва, ул. А. Солженицына, д. 25}
+
+\affil[2]{
+Moscow Institute of Physics and Technology,\\
+1A, Kerchenskaya Str., Moscow, 117303, Russia}{Московский физико-технический институт (НИУ),\\
+117303, Россия, г. Москва, ул. Керченская, д. 1А, корп. 1}
+
+\affil[3]{Innopolis University,\\
+1, Universitetskaya Str., Innopolis, 420500, Russia}{Университет Иннополис,\\
+420500, Россия, г. Иннополис, ул.Университетская, д. 1}
+
+\title{Effective Method with Compression for Distributed and Federated Cocoercive Variational Inequalities}{Эффективный метод с компрессией для распределенных и федеративных кокоэрсивных вариационных неравенств}
+
+\doi{10.15514/ISPRAS-2018-1(2)-33.}
+\keywords{Variational inequalities; distributed optimization; federated learning; compression techniques.}{Вариационные неравенства; распределенная оптимизация; федеративное обучение; техники сжатия информации.}
+
+% Acknowledgments are optional
+%\acknowledgments{This work was supported by a grant from the Russian Science Foundation 18-11-00100}{Данная работа выполнена при поддержке гранта РНФ 18-11-00100}
+
+\abstract{Variational inequalities as an effective tool for solving applied problems, including machine learning tasks, have been attracting more and more attention from researchers in recent years. The use of variational inequalities covers a wide range of areas — from reinforcement learning and generative models to traditional applications in economics and game theory. At the same time, it is impossible to imagine the modern world of machine learning without distributed optimization approaches that can significantly speed up the training process on large amounts of data. However, faced with the high costs of communication between devices in a computing network, the scientific community is striving to develop approaches that make computations cheap and stable. In this paper, we investigate the compression technique of transmitted information and its application to the distributed variational inequalities problem. In particular, we present a method based on advanced techniques originally developed for minimization problems. For the new method, we provide an exhaustive theoretical convergence analysis for cocoersive strongly monotone variational inequalities. We conduct experiments that emphasize the high performance of the presented technique and confirm its practical applicability.}{Вариационные неравенства как эффективный инструмент для решения прикладных задач, в том числе задач машинного обучения, в последние годы привлекают всё больше внимания исследователей. Области применения вариационных неравенств охватывают широкий спектр направлений — от обучения с подкреплением и генеративных моделей до традиционных приложений в экономике и теории игр. В то же время, невозможно представить современный мир машинного обучения без подходов распределенной оптимизации, которые позволяют значительно ускорить процесс обучения на огромных объемах данных. Однако, сталкиваясь с большими затратами на коммуникации между устройствами в вычислительной сети, научное сообщество стремится к разработке подходов, делающих вычисления дешевыми и стабильными. В этой работе исследуется техника сжатия передаваемой информации применимо к задаче распределенных вариационных неравенств. В частности, предлагается метод на основе продвинутых техник, исконно разработанных для задач минимизации. Для нового метода приводится исчерпывающий теоретический анализ сходимости для кокоэрсивных сильно монотонных вариационных неравенств. Проведенные эксперименты подчеркивают высокую производительность представленной техники и подтверждают практическую применимость.}
+
+\begin{document}
+
+\makedoi
+
+\maketitleen
+
+\newpage
+
+\maketitleru
+
+\section{Введение}
+Вариационные неравенства (ВН) привлекают внимание исследователей в различных областях уже более полувека \cite{browder1965nonexpansive}. В данной работе рассматривается общая постановка задачи вариационных неравенств на неограниченном множестве:
+\begin{align}\label{eq:vi_setup}
+    \text{Найти~} z^*\in\mathbb R^d \text{~такое, что~} F(z^*) = 0,
+\end{align}
+где $F:\mathbb R^d \rightarrow \mathbb R^d$ -- заданный оператор. Такая общая постановка покрывает множество известных задач. Приведем несколько примеров.
+\begin{example}\label{ex:1}
+    Классическая задача минимизации:
+    \begin{align*}
+        \underset{z\in\mathbb R^d}{\min}~ f(z),
+    \end{align*}
+    где $f(z)$ -- некоторая целевая функция. Для того, чтобы свести задачу \eqref{eq:vi_setup} к задаче минимизации, достаточно рассмотреть оператор вида $F(z) = \nabla f(z)$. Более того, для выпуклых функций $f(z)$ точка $z^*$ будет решением задачи \eqref{eq:vi_setup} тогда и только тогда, когда она будет решением этой задачи.
+\end{example}
+\begin{example}\label{ex:2}
+    Задача поиска седловой точки (минимаксная задача):
+    \begin{align*}
+        \underset{x\in\mathbb R^d}{\min}\underset{y\in\mathbb R^d}{\max} ~g(x, y),
+    \end{align*}
+    где $g(z) = g(x, y)$ -- некоторая целевая функция. Для того, чтобы свести задачу \eqref{eq:vi_setup} к минимаксной задаче, достаточно рассмотреть оператор вида $F(z) = F(x, y) = \left[\nabla_x g(x, y), -\nabla_y g(x, y)\right]$. Более того, для выпуклых-вогнутых функций $g(x, y)$ точка $z^* = (x^*, y^*)$ будет решением задачи \eqref{eq:vi_setup} тогда и только тогда, когда она будет решением минимаксной задачи.
+\end{example}
+
+Тем не менее, несмотря на общность постановки, она практически неприменима в современных прикладных задачах, в первую очередь в задачах обучения. Дело в том, что считать полное значение оператора на одном вычислительном устройстве слишком затратно по времени из-за огромных объемов тренировочных данных. Поэтому на практике используют распределенные подходы \cite{kairouz2021advances,li2020federated,verbraeken2020survey}. В такой парадигме используется сеть из нескольких устройств, каждое из которых содержит часть тренировочной выборки. Эти устройства обычно объединены в звездную топологию, где крайние узлы вычисляют значение оператора исходя из хранящейся локально информации, а сервер агрегирует полученные данные и производит обновление оптимизационных переменных. Отдельно выделяют постановку федеративного обучения \cite{konevcny2016federated, smith2017federated, mcmahan2017communication}. Она подразумевает наличие на каждом устройстве уникальных тренировочных выборок, причем выборки на разных устройствах необязательно одинаково распределены и, как правило, содержат приватную информацию. 
+
+Таким образом, чтобы формально перейти к общей распределенной постановке, представим оператор $F$ в виде конечной суммы:
+\begin{align}
+\label{eq:finite-sum}
+    F(z) = \frac{1}{n}\sum\limits_{i=1}^n F_i(z),
+\end{align}
+где $n$ -- количество устройств в вычислительной сети, а $F_i(\cdot)$ -- локальный оператор, вычисляемый на основе данных на $i$-ом устройстве. Комбинация \eqref{eq:vi_setup} и \eqref{eq:finite-sum} отражает всевозможный спектр задач распределенного машинного обучения от простых регрессий до нейронных сетей \cite{lecun2015deep}. Несмотря на то, что такой подход применим к классической задачи минимизации (Пример \ref{ex:1}), больший интерес он вызывает для поиска седловых точек (Пример \ref{ex:2}) \cite{beznosikov2020distributed}. На практике это нашло особенно яркое применение в так называемом состязательном подходе, будь то обучение генеративных сетей (GAN) \cite{goodfellow2020generative}, или робастное обучение моделей \cite{liu2020adversarial, zhu2019freelb}. Кроме того, вариационные неравенства также находят широкое применение в различных классических задачах, включая эффективное матричное разложение \cite{bach2008convex}, устранение зернения в изображениях \cite{esser2010general, chambolle2011first}, робастную оптимизацию \cite{ben2009robust}, постановки из экономики, теории игр \cite{von1953theory} и оптимального управления \cite{facchinei2003finite}.
+
+Для решения такой задачи ВН $\eqref{eq:vi_setup} + \eqref{eq:finite-sum}$ необходима адаптация классических методов оптимизации, например, таких как градиентный спуск. Ее можно осуществить по аналогии с Примером \ref{ex:1}, рассмотрев $\nabla f(\cdot)\rightarrow F(\cdot)$. Однако, из-за распределенной постановки \eqref{eq:finite-sum}, чтобы собрать полное значение оператора $F(\cdot)$, вычислительным устройствам необходимо "общаться" друг с другом, как правило, посредством пересылки данных на сервер. Подобные затраты на коммуникацию представляют собой серьезное ограничение распределенных и федеративных подходов. Передача информации часто занимает много времени и нарушает процесс обучения. В некоторых случаях временные затраты могут значительно превышать сложность локальных вычислений, что делает архитектурные решения неэффективными для практического применения. 
+
+Для снижения издержек на обмен информацией между узлами были предложены различные методы уменьшения количества передаваемых данных \cite{kovalev2022optimal, medyakov2023optimal}. В данной работе исследуется применимость техники компрессии к распределенным вариационным неравенствам, сочетая преимущества сжатия и эффективной обработки данных для минимизации коммуникационных затрат и повышения устойчивости алгоритмов.
+
+\section{Обзор литературы}
+
+\subsection{Методы со сжатием}
+
+Для преодоления возникающих проблем с коммуникационными затратами сообщество применяет различные методики. Идея уменьшения количества передаваемой информации в векторах градиентов была исследована в работе \cite{nesterov2012efficiency}. Авторы предлагают модификацию градиентного спуска, при которой на каждом шаге обновляются только некоторые случайные координаты. Такие операторы впоследствии стали называть \textsc{Rand-K} \cite{beznosikov2023biased}. Через несколько лет метод координатного градиентного спуска был адаптирован для распределенной оптимизации \cite{richtarik2016distributed}. Альтернативной методикой борьбы с коммуникационными издержками является техника сжатия передаваемой информации, основанная на использовании квантизации градиентов или параметров моделей \cite{suresh2017distributed}. Данные методы направлены на уменьшение объема данных, за счет ограничения количества бит, необходимых для представления чисел с плавающей точкой \cite{wu2018error, wangni2018gradient, wen2017terngrad}. Обобщение техники сжатия (будь то с помощью выбора координат или квантизации) было сделано в работе \cite{alistarh2017qsgd} посредством введения общего определения оператора сжатия. Авторы предлагают добавить оператор в обычный градиентный спуск.
+% . с произвольным несмещенным компрессором было впервые представлено в работе \textsc{QSGD} 
+Однако этот метод не сходится к истинному решению, а лишь к некоторой окрестности, зависящей от дисперсии квантизованных оценок градиентов \cite{gorbunov2021distributed}.
+
+% Что же касается смещенных компрессоров, среди наиболее популярных решений, исправляющих ошибку расходимости градиентного спуска в данном сценарии, выделяется метод \textsc{Error Feedback} \cite{stich2018sparsified, alistarh2018convergence, seide20141}, а также его улучшенная версия (\textsc{EF-21}) \cite{richtarik2021ef21}, которая демонстрируют передовые результаты в условиях гетерогенности локальных функций потерь.
+% Несмотря на эффективность некоторых эвристик сжатия данных и ускорении процессов распределенного обучения, отсутствие важного свойства несмещенности приводит к дополнительным искажениям в оптимизационном процессе, увеличивая уровень шума. Для повышения устойчивости оптимизации необходимо применять техники, позволяющие проводить несмещенное сжатие. 
+
+Принимая во внимание данную проблему, сообщество исследователей в области оптимизации и машинного обучения активно разрабатывает распределенные алгоритмы, применяющие технику уменьшения дисперсии. В стандартной нераспределенной задаче стохастической оптимизации она была использована в методах \textsc{SVRG} \cite{johnson2013accelerating}, \textsc{SAG} \cite{roux2012stochastic} and \textsc{SAGA} \cite{defazio2014saga}, \textsc{SARAH} \cite{nguyen2017sarah, beznosikov2024random}, а затем адаптирована для распределенной оптимизации в \textsc{DIANA} \cite{mishchenko2024distributed} путем сжатия не самого градиента, а разности градиентов. В дальнейшем, идея была развита и использована в более продвинутых алгоритмах: \textsc{VR-DIANA} \cite{horvoth2022natural}, \textsc{FedCOMGATE} \cite{haddadpour2021federated}, \textsc{FedSTEPH} \cite{das2022faster}.
+Одной из наиболее продвинутых методик применения данных техник в невыпуклой распределенной оптимизации является \textsc{MARINA} \cite{gorbunov2021marina}. В отличие от всех известных подходов, использующих несмещенные операторы сжатия, \textsc{MARINA} базируется на смещенной оценке градиента. Тем не менее, доказано, что данный метод обеспечивает гарантии сходимости, превосходящие все ранее известные техники.
+
+\subsection{Методы решения вариационных неравенств}
+Применение различных методов для решения задач вариационных неравенств и задач седловых точек является предметом обширных исследований \cite{juditsky2011solving, gidel2018variational, hsieh2019convergence, mishchenko2020revisiting, hsieh2020explore, gorbunov2022stochastic, beznosikov2023smooth, beznosikov2024first, solodkin2024methods}. Упомянутая выше техника редукции дисперсии была также перенесена и на вариационные неравенства \cite{palaniappan2016stochastic,chavdarova2019reducing,Yura2021,alacaoglu2021stochastic, kovalev2022optimalvi, beznosikov2022unified, pichugin2023optimal, pichugin2024method, medyakovshuffling}. Большинство из этих методов основаны на подходе \textsc{SVRG}, однако некоторые исследования были проведены в анализе более привлекательного с практической точки зрения для задач минимизации метода \textsc{SARAH} \cite{chen2022faster, beznosikov2023sarah}. 
+
+Методы борьбы за эффективность процесса общения также исследовались в общности вариационных неравенств \cite{liu2019decentralized, liu2020decentralized, tsaknakis2020decentralized, beznosikov2020distributed, deng2021local, beznosikov2021distributed, beznosikov2022decentralized}, в том числе и алгоритмы с компрессией. Для липшицевых операторов это было сделано в работах \cite{beznosikov2022distributed, beznosikov2022compression, beznosikov2024similarity} на основе редукции дисперсии из работы \cite{alacaoglu2021stochastic}. 
+
+Говоря о стандартных предположениях, которые используются в анализе методов решения вариационных неравенств, кокоэрсивный режим является одним из наиболее часто встречающихся, несмотря на то, что данное требование является более строгим нежели липшицевость операторов \cite{loizou2021stochastic}. В частности для кокоэрсивных вариационных неравенств существует общий анализ стохастических методов \cite{beznosikov2023stochastic}, включающий и методы со сжатием.
+
+В разрезе работ, использующих предположение кокоэрсивности, стоит выделить основанный на алгоритме \textsc{SARAH} метод \cite{beznosikov2023sarah}. В то же время метод \textsc{MARINA}, как раз и базирующийся на \textsc{SARAH}, еще не был исследован в контексте вариационных неравенств. Шаг \textsc{MARINA} по факту является шагом \textsc{SARAH} с добавлением сжатия. Как уже отмечалось ранее, метод \textsc{MARINA} является наиболее привлекательным с точки зрения уменьшения коммуникационных издержек в парадигме распределенного обучения. Цель данной статьи -- исследовать теоретическую и практическую применимость алгоритма \textsc{MARINA} к кокоэрсивным вариационным неравенствам.
+
+\section{Основные результаты}
+\begin{itemize}
+\item \textbf{Новый метод.} В рамках исследования распределенной постановки представляется новый метод, который использует метод с компрессией \textsc{MARINA} для решения задач вариационных неравенств. 
+\item {\bfseries Теоретическая значимость.} В работе представлен полный теоретический анализ предложенного метода для кокоэрсивных монотонных вариационных неравенств.
+\item \textbf{Адаптивный анализ.} Данное исследование предлагает несколько возможных расширений. Например, полученные результаты могут быть обобщены для случая произвольного оператора квантизации и различных размеров подмножеств данных, используемых клиентами.
+\item \textbf{Экспериментальная проверка.} Проведены численные эксперименты, которые подчеркивают применимость нашего метода с различными техниками сжатия (квантизацией, выбором координат).
+\end{itemize}
+
+
+
+\section{Постановка}
+
+Приведем нотацию, которая используется в работе. Будем обозначать множество векторов размерности $d$ с элементами, являющимися вещественными числами, как $\mathbb R^d$, Евклидову норму вектора $u\in\mathbb R^d$ как $\|u\| = \sqrt{\langle u, u\rangle}$, математическое ожидание случайной величины, как $\mathbb E[\cdot]$.
+
+Напомним, что рассматривается задача \eqref{eq:vi_setup}, где оператор $F$ принимает вид \eqref{eq:finite-sum}. Введем следующие предположения на оператор.
+
+\begin{assumption}[Кокоэрсивность] \label{as:coerc}
+Каждый оператор $F_i$ является $\ell$-кокоэрсивным, если для любых $u, v \in \mathbb R^d$ выполняется
+\begin{equation*}
+\label{eq:Lipsh}
+\| F_i(u)-F_i(v) \|^2  \leq \ell \langle F_i(u)-F_i(v) , u - v\rangle.
+\end{equation*}
+\end{assumption}
+Это предположение является более сильным аналогом предположения на липшицевость $F_i$. Для задач выпуклой минимизации $\ell$-липшицевость и $\ell$-кокоэрсивность эквивалентны. Сравнение этих предположений для задачи вариационных неравенств приведено в работе \cite{loizou2021stochastic}.
+
+\begin{assumption}[Сильная монотонность]\label{as:strmon}
+Оператор $F$ является $\mu$-сильно монотонным, то есть для любых $u, v \in \mathbb R^d$ выполняется
+\begin{equation*}
+\label{eq:strmon}
+\langle F(u) - F(v), u - v \rangle \geq \mu \| u-v\|^2.
+\end{equation*}
+\end{assumption}
+Для задач минимизации это свойство означает сильную выпуклость, а для задач поиска седловой точки -- сильную выпуклость - сильную вогнутость.
+\begin{assumption}\label{as:bias}
+    Отображение $\mathcal{C}: \mathbb R^d \rightarrow \mathbb R^d$ является несмещенным компрессором, если для любого $u\in\mathbb R^d$ существует $\alpha > 0$ такое, что выполняется
+    \begin{align*}
+        &\mathbb E\left[\mathcal{C}(u)\right] = u,\\
+        &\mathbb E\left\|\mathcal{C}(u) - u\right\|^2 \leqslant \alpha \|u\|^2.
+    \end{align*}
+\end{assumption}
+Это классическое предположение на компрессоры, используемые как в статье \textsc{MARINA} \cite{gorbunov2021marina}, так и в других работах \cite{alistarh2017qsgd, gorbunov2020unified}.
+\begin{assumption}\label{as:comp}
+    Компрессор $\mathcal{C}(\cdot)$ оставляет долю информации равную $\delta \in (0, 1]$.
+\end{assumption}
+Например, для компрессоров, которые производят выбор только части координат, это предположение означает, что из $d$ координат, они оставят только $d\delta$.
+
+\section{Метод и анализ сходимости}
+
+Для решения общей постановки задачи вариационных неравенств с липшицевыми операторами обычно используют методы, основанные на подходе \textsc{Extragradient} \cite{juditsky2011solving}. Однако в этой работе рассматриваются кокоэрсивные вариационные неравенства, поэтому достаточно использовать классический подход \textsc{SGD} \cite{robbins1951stochastic, moulines2011non}. Комбинируя его с продвинутой техникой сжатия \textsc{MARINA}, представляем формальное описание рассматриваемого алгоритма (Алгоритм \ref{alg:marina}). Отметим, что наш подход несколько отличается от предложенного в оригинальной статье \cite{gorbunov2021marina}. Там предлагается производить рестарт рекурсивных обновлений аппроксимаций локальных градиентов с некоторой заранее выбранной вероятностью, здесь же это делается раз в фиксированное число итераций, которое называется эпохой (строка \ref{alg:marina:line6} в Алгоритме \ref{alg:marina}).
+Далее приведен теоретический анализ сходимости Алгоритма \ref{alg:marina}.
+
+\begin{algorithm}[ht]
+	\caption{\foreignlanguage{russian}{\textsc{MARINA} для кокоэрсивных вариационных неравенств}}
+	\label{alg:marina}
+	\begin{algorithmic}[1]
+\State
+\noindent {\bf Параметры:}  Шаг обучения $\gamma>0$, количество итераций обучения $K$.\\
+\noindent {\bf Инициализация:} $z^0 \in \mathbb R^d$.
+\For {$s=1, 2, \ldots, S$}
+    \State $z^0 = \tilde z^{s-1}$
+    \State $g^0 = F(z^0)$
+    \State \label{alg:marina:line6}$z^1 = z^0 - \gamma g^0$
+    \For {$k=1, 2, \ldots, K-1$}
+        \State Отправить $g^{k-1}$ на каждое устройство 
+        \For {$i = 1, 2, \ldots, n$}
+            \State $g_i^{k} = g^{k-1} + \mathcal{C}\left(F_i(z^{k}) - F_i(z^{k-1})\right)$
+            \State Отправить $g_i^k$ на сервер
+        \EndFor
+        \State $g^k = \frac{1}{n}\sum\limits_{i=1}^n g_i^k$
+        \State $z^{k+1} = z^k - \gamma g^k$
+    \EndFor
+    \State $\tilde z^s = z^K$
+\EndFor
+
+\end{algorithmic}
+\end{algorithm}
+
+\begin{lemma} \label{lem:1}
+Пусть выполнены Предположения \ref{as:coerc}, \ref{as:strmon}, \ref{as:bias}. Тогда для Алгоритма \ref{alg:marina} c $\gamma \leqslant\frac{1}{2\ell(1+\frac{\alpha}{n})}$ верна следующая оценка:
+\begin{eqnarray*}
+    \mathbb E\| g^{K} \|^2 \leqslant \left(1 - \frac{2\gamma\mu}{3}\right)^{K}\mathbb E\|F(z^0)\|^2.
+\end{eqnarray*}
+\end{lemma}
+\begin{proof}
+Зафиксируем любое $s$ в Алгоритме \ref{alg:marina} и рассмотрим обновление аппроксимаций градиента $g^k$:
+\begin{eqnarray*}
+    \| g^{k} \|^2 &=& 
+    \left\| \frac{1}{n}\sum\limits_{i=1}^n g_i^{k} \right\|^2\\
+    &=& \left\|g^{k-1} + \frac{1}{n}\sum\limits_{i=1}^n \mathcal{C}\left(F_i(z^{k}) - F_i(z^{k-1})\right)\right\|^2 \\
+    &=& \left\|g^{k-1} + \frac{1}{n}\sum\limits_{i=1}^n \left(F_i(z^{k}) - F_i(z^{k-1})\right)\right\|^2 \\
+    & & + \left\|\frac{1}{n}\sum\limits_{i=1}^n \left(\mathcal{C}\left(F_i(z^{k}) - F_i(z^{k-1})\right) - \left(F_i(z^{k}) - F_i(z^{k-1})\right)\right)\right\|^2 \\
+    & & + 2\Bigl\langle g^{k-1} + \frac{1}{n}\sum\limits_{i=1}^n \left(F_i(z^{k}) - F_i(z^{k-1})\right),\\
+    & &\quad\quad\quad\quad\frac{1}{n}\sum\limits_{i=1}^n \left(\mathcal{C}\left(F_i(z^{k}) - F_i(z^{k-1})\right) - \left(F_i(z^{k}) - F_i(z^{k-1})\right)\right)\Bigr\rangle.
+\end{eqnarray*}
+Пользуясь Предположением \ref{as:bias}, получим, что математическое ожидание правой части скалярного произведения равно нулю. Значит, взяв математическое ожидание, скалярное произведение становится равным нулю. Более того, используя Предположение \ref{as:bias} для второй нормы, получаем
+\begin{eqnarray*}
+    & &\left\|\frac{1}{n}\sum\limits_{i=1}^n \left(\mathcal{C}\left(F_i(z^{k}) - F_i(z^{k-1})\right) - \left(F_i(z^{k}) - F_i(z^{k-1})\right)\right)\right\|^2 \\
+    & &= \frac{1}{n^2}\sum\limits_{i=1}^n\left\| \mathcal{C}\left(F_i(z^{k}) - F_i(z^{k-1})\right) - \left(F_i(z^{k}) - F_i(z^{k-1})\right)\right\|^2\\
+    & & \leqslant \frac{\alpha}{n^2}\sum\limits_{i=1}^n\left\|F_i(z^{k}) - F_i(z^{k-1})\right\|^2,
+\end{eqnarray*}
+так как все попарные скалярные произведения равны нулю. Таким образом,
+\begin{eqnarray*}
+    \mathbb E\| g^{k} \|^2 &\leqslant& \mathbb E\|g^{k-1}\|^2 + \left\|F(z^k) - F(z^{k-1})\right\|^2 \\
+    & & + 2\left\langle g^{k-1}, F(z^k) - F(z^{k-1})\right\rangle\\
+    & & + \frac{\alpha}{n^2}\sum\limits_{i=1}^n\left\|F_i(z^k) - F_i(z^{k-1})\right\|^2\\
+    &=& \mathbb E\|g^{k-1}\|^2 + \left\|F(z^k) - F(z^{k-1})\right\|^2 \\
+    & & - \frac{2}{\gamma}\left\langle z^{k} - z^{k-1}, F(z^k) - F(z^{k-1})\right\rangle\\
+    & & + \frac{\alpha}{n^2}\sum\limits_{i=1}^n\left\|F_i(z^k) - F_i(z^{k-1})\right\|^2 \\
+    &=& \mathbb E\|g^{k-1}\|^2 + \left\|F(z^k) - F(z^{k-1})\right\|^2\\
+    & & + \frac{\alpha}{n^2}\sum\limits_{i=1}^n\left\|F_i(z^k) - F_i(z^{k-1})\right\|^2 \\
+    & & - \frac{2}{3\gamma}\frac{1}{n}\sum\limits_{i=1}^n\left\langle z^{k} - z^{k-1}, F_i(z^k) - F_i(z^{k-1})\right\rangle \\
+    & & - \frac{2}{3\gamma}\left\langle z^{k} - z^{k-1}, F(z^k) - F(z^{k-1})\right\rangle \\
+    & &- \frac{2}{3\gamma}\left\langle z^{k} - z^{k-1}, F(z^k) - F(z^{k-1})\right\rangle.
+\end{eqnarray*}
+Для первого и второго скалярных произведений используется Предположение \ref{as:coerc}, а именно $\left\langle z^k - z^{k-1}, F_i(z^k) - F_i(z^{k-1})\right\rangle \geqslant \frac{1}{\ell}\left\|F_i(z^k) - F_i(z^{k-1})\right\|^2$, а для третьего -- Предположение \ref{as:strmon}, а именно $\left\langle z^k - z^{k-1}, F(z^k) - F(z^{k-1})\right\rangle \geqslant \mu\left\|F(z^k) - F(z^{k-1})\right\|^2$. Тогда
+\begin{eqnarray*}
+    \mathbb E\| g^{k} \|^2 &\leqslant& \mathbb E\|g^{k-1}\|^2 + \left(1 - \frac{2}{3\gamma \ell} \right) \left\|F(z^k) - F(z^{k-1})\right\|^2\\ 
+    & & + \left(\frac{\alpha}{n} - \frac{2}{3\gamma \ell} \right) \frac{1}{n}\sum\limits_{i=1}^n\left\|F_i(z^k) - F_i(z^{k-1})\right\|^2\\
+    & & - \frac{2\mu}{3\gamma}\|z^k - z^{k-1}\|^2.
+\end{eqnarray*}
+Выберем $\gamma \leqslant \frac{1}{2\ell\left(1 + \frac{\alpha}{n}\right)}$. С учетом этого, получим
+\begin{eqnarray*}
+    \mathbb E\| g^{k} \|^2 &\leqslant& \left(1 - \frac{2\gamma\mu}{3}\right)\mathbb E\|g^{k-1}\|^2.
+\end{eqnarray*}
+Запустим рекурсию до первой итерации в эпохе и учтем, что $g^0 = F(z^0)$:
+\begin{eqnarray*}
+    \mathbb E\| g^{K} \|^2 \leqslant \left(1 - \frac{2\gamma\mu}{3}\right)^{K}\mathbb E\|F(z^0)\|^2.
+\end{eqnarray*}
+\end{proof}
+
+Следующая лемма дает нам представление о разнице между полным оператором $F(\cdot)$ и его сжатой версией $g$ в течение внутреннего цикла Алгоритма \ref{alg:marina}. 
+
+\begin{lemma} \label{lem:2}
+Пусть выполнены Предположения \ref{as:coerc}, \ref{as:strmon}, \ref{as:bias}. Тогда для Алгоритма \ref{alg:marina} верна следующая оценка:
+\begin{eqnarray*}
+    \mathbb E \left\|F(z^K) - g^{K}\right\|^2 \leqslant \frac{\gamma\ell\left(1+\frac{\alpha}{n}\right)}{1 - \gamma\ell\left(1+\frac{\alpha}{n}\right)} \mathbb E\|F(z^0)\|^2.
+\end{eqnarray*}
+\begin{proof}
+Рассмотрим следующую цепочку:
+\begin{eqnarray}
+    \notag\mathbb E \left\|F(z^k) - g^k\right\|^2 &=& \mathbb E \left\|\left[F(z^{k-1}) - g^{k-1}\right] + \left[F(z^k) - F(z^{k-1})\right] - \left[g^k - g^{k-1}\right]\right\|^2\\
+    \notag&=& \mathbb E \left\|F(z^{k-1}) - g^{k-1}\right\|^2 + \mathbb E \left\|F(z^k) - F(z^{k-1})\right\|^2 \\
+    \notag& & + \mathbb E \left\|g^k - g^{k-1}\right\|^2 + 2\mathbb E\left\langle F(z^{k-1}) - g^{k-1}, F(z^k) - F(z^{k-1})\right\rangle \\
+    \notag& & - 2\mathbb E\left\langle F(z^{k-1}) - g^{k-1}, g^k - g^{k-1}\right\rangle \\
+    \label{l2:eq1}& & - 2\mathbb E\left\langle F(z^k) - F(z^{k-1}), g^k - g^{k-1}\right\rangle.
+\end{eqnarray}
+Теперь отдельно оценим второе скалярное произведение:
+\begin{eqnarray*}
+    & &\mathbb E\left\langle F(z^{k-1}) - g^{k-1}, g^k - g^{k-1}\right\rangle \\
+    & & \quad\quad= \mathbb E\left\langle F(z^{k-1}) - g^{k-1}, \frac{1}{n}\sum\limits_{i=1}^n\mathcal{C}\left(F_i(z^k) - F_i(z^{k-1})\right)\right\rangle\\
+    & & \quad\quad= \mathbb E\left\langle F(z^{k-1}) - g^{k-1}, \frac{1}{n}\sum\limits_{i=1}^n \left(F_i(z^k) - F_i(z^{k-1})\right)\right\rangle \\
+    & & \quad\quad\quad+ \mathbb E\Bigl\langle F(z^{k-1}) - g^{k-1},\\
+    & & \quad\quad\quad\quad\quad\frac{1}{n}\sum\limits_{i=1}^n\left(\mathcal{C}\left(F_i(z^k) - F_i(z^{k-1})\right) - \left(F_i(z^k) - F_i(z^{k-1})\right)\right)\Bigr\rangle.
+\end{eqnarray*}
+Так как второе скалярное произведение равно нулю, ввиду Предположения \ref{as:bias} получим
+\begin{eqnarray}
+\label{l2:eq2}
+    \mathbb E\left\langle F(z^{k-1}) - g^{k-1}, g^k - g^{k-1}\right\rangle &=& \mathbb E\left\langle F(z^{k-1}) - g^{k-1}, F(z^k) - F(z^{k-1})\right\rangle.
+    \quad~~
+\end{eqnarray}
+Делая аналогичные выкладки, можно оценить третье скалярное произведение в \eqref{l2:eq1}, как
+\begin{eqnarray}
+    \notag\mathbb E\left\langle F(z^k) - F(z^{k-1}), g^k - g^{k-1}\right\rangle &=& \mathbb E\left\langle F(z^k) - F(z^{k-1}), F(z^k) - F(z^{k-1})\right\rangle\\
+    \label{l2:eq3}&=& \left\|F(z^k) - F(z^{k-1})\right\|^2.
+\end{eqnarray}
+Подставляя \eqref{l2:eq2} и \eqref{l2:eq3} в \eqref{l2:eq1}, получим
+\begin{eqnarray*}
+    \mathbb E \left\|F(z^k) - g^k\right\|^2 &=& \mathbb E \left\|F(z^{k-1}) - g^{k-1}\right\|^2 + \mathbb E \left\|F(z^k) - F(z^{k-1})\right\|^2 \\
+    & & + \mathbb E \left\|g^k - g^{k-1}\right\|^2 \\
+    & & + 2\mathbb E\left\langle F(z^{k-1}) - g^{k-1}, F(z^k) - F(z^{k-1})\right\rangle \\
+    & & - 2\mathbb E\left\langle F(z^{k-1}) - g^{k-1}, F(z^k) - F(z^{k-1})\right\rangle \\
+    & & - 2\mathbb E\left\|F(z^k) - F(z^{k-1})\right\|^2\\
+    &\leqslant& \mathbb E \left\|F(z^{k-1}) - g^{k-1}\right\|^2 + \mathbb E \left\|g^k - g^{k-1}\right\|^2.
+\end{eqnarray*}
+Запустим рекурсию до первой итерации в эпохе и учтем, что $g^0 = F(z^0)$:
+\begin{eqnarray}
+\label{l2:eq4}
+    \mathbb E\left\|F(z^K) - g^{K} \right\|^2 \leqslant \sum\limits_{k=1}^K\mathbb E\|g^k - g^{k-1}\|^2.
+\end{eqnarray}
+Пользуясь Предположением \ref{as:bias},
+\begin{eqnarray}
+    \notag\mathbb E\|g^k - g^{k-1}\|^2 &=& \mathbb E\left\|\frac{1}{n}\sum\limits_{i=1}^n\mathcal{C}\left(F_i(z^k) - F_i(z^{k-1}\right)\right\|^2\\
+    \label{l2:eq5}&\leqslant& \frac{1+\frac{\alpha}{n}}{n}\sum\limits_{i=1}^n\left\|F_i(z^k) - F_i(z^{k-1})\right\|^2.
+\end{eqnarray}
+Далее, аналогично доказательству Леммы \ref{lem:1}:
+\begin{eqnarray*}
+    \mathbb E\| g^{k} \|^2 &=& \mathbb E\left\|g^{k-1} + \frac{1}{n}\sum\limits_{i=1}^n \mathcal{C}\left(F_i(z^{k}) - F_i(z^{k-1})\right)\right\|^2 \\
+    &\leqslant& \mathbb E\left\|g^{k-1} + \frac{1}{n}\sum\limits_{i=1}^n \left(F_i(z^{k}) - F_i(z^{k-1})\right)\right\|^2 \\
+    & & + \frac{\alpha}{n^2}\sum\limits_{i=1}^n\left\|F_i(z^{k}) - F_i(z^{k-1})\right\|^2\\
+    &\leqslant& \mathbb E\|g^{k-1}\|^2 + \frac{1+\frac{\alpha}{n}}{n}\sum\limits_{i=1}^n\left\|F_i(z^k) - F_i(z^{k-1})\right\|^2\\
+    & & + 2\left\langle g^{k-1}, F(z^k) - F(z^{k-1}\right\rangle\\
+    &=& \mathbb E\|g^{k-1}\|^2 + \frac{1+\frac{\alpha}{n}}{n}\sum\limits_{i=1}^n\left\|F_i(z^k) - F_i(z^{k-1})\right\|^2 \\
+    & & - \frac{2}{\gamma}\left\langle z^{k} - z^{k-1}, F(z^k) - F(z^{k-1}\right\rangle\\
+    &=& \mathbb E\|g^{k-1}\|^2 + \frac{1+\frac{\alpha}{n}}{n}\sum\limits_{i=1}^n\left\|F_i(z^k) - F_i(z^{k-1})\right\|^2 \\
+    & & - \frac{1}{\gamma}\frac{1}{n}\sum\limits_{i=1}^n\left\langle z^{k} - z^{k-1}, F_i(z^k) - F_i(z^{k-1})\right\rangle \\
+    & &- \frac{1}{\gamma}\left\langle z^{k} - z^{k-1}, F(z^k) - F(z^{k-1})\right\rangle\\
+    &\leqslant& (1-\gamma\mu)\mathbb E\|g^{k-1}\|^2 \\
+    & & + \left(1 - \frac{1}{\gamma\ell\left(1+\frac{\alpha}{n}\right)}\right)\frac{1+\frac{\alpha}{n}}{n}\sum\limits_{i=1}^n\left\|F_i(z^k) - F_i(z^{k-1})\right\|^2.
+\end{eqnarray*}
+Выражая сумму,
+\begin{eqnarray*}
+    & &\frac{1+\frac{\alpha}{n}}{n}\sum\limits_{i=1}^n\left\|F_i(z^k) - F_i(z^{k-1})\right\|^2 \\
+    & & \quad\quad\quad\quad\leqslant \frac{\gamma\ell\left(1+\frac{\alpha}{n}\right)}{1 - \gamma\ell\left(1+\frac{\alpha}{n}\right)} \left[(1-\gamma\mu)\mathbb E\|g^{k-1}\|^2 - \mathbb E\|g^{k-1}\|^2\right]\\
+    & & \quad\quad\quad\quad\leqslant\frac{\gamma\ell\left(1+\frac{\alpha}{n}\right)}{1 - \gamma\ell\left(1+\frac{\alpha}{n}\right)}\left[\mathbb E\|g^{k-1}\|^2 - \mathbb E\|g^{k}\|^2\right].
+\end{eqnarray*}
+Комбинируя полученную оценку с \eqref{l2:eq5} и \eqref{l2:eq4}, получаем
+\begin{eqnarray*}
+    \mathbb E \left\|F(z^K) - g^{K}\right\|^2 \leqslant \frac{\gamma\ell\left(1+\frac{\alpha}{n}\right)}{1 - \gamma\ell\left(1+\frac{\alpha}{n}\right)} \mathbb E\|g^{0}\|^2 = \frac{\gamma\ell\left(1+\frac{\alpha}{n}\right)}{1 - \gamma\ell\left(1+\frac{\alpha}{n}\right)} \mathbb E\|F(z^0)\|^2.
+\end{eqnarray*}
+\end{proof}
+\end{lemma}
+
+Теперь объединим результаты Леммы \ref{lem:1} и \ref{lem:2} и получим основную теорему данной статьи.
+
+\begin{theorem} \label{th:1}
+Пусть выполнены Предположения \ref{as:coerc}, \ref{as:strmon}, \ref{as:bias}. Тогда для Алгоритма \ref{alg:marina} c $\gamma =\frac{1}{8\ell\left(1+\frac{\alpha}{n}\right)}$ и $K = \frac{30\ell\left(1 + \frac{\alpha}{n}\right)}{\mu}$ верна следующая оценка:
+\begin{eqnarray*}
+    \mathbb E\| F(\tilde z^s) \|^2 \leqslant \frac{1}{2}\mathbb E\|F(\tilde z^{{s-1}})\|^2.
+\end{eqnarray*}
+\end{theorem}
+\begin{proof}
+Начнем с
+\begin{eqnarray*}
+    \mathbb E\left\| F (z^K) \right\|^2 \leqslant 2 \mathbb E\left\| F(z^K) - g^K \right\|^2 + 2 \mathbb E\left\| g^K \right\|^2.
+\end{eqnarray*}
+Далее применим Леммы \ref{lem:1}, \ref{lem:2}:
+\begin{eqnarray*}
+    \mathbb E\left\| F (z^K) \right\|^2 &\leqslant& \left[2\frac{\gamma\ell\left(1+\frac{\alpha}{n}\right)}{1 - \gamma\ell\left(1+\frac{\alpha}{n}\right)} + 2\left(1 - \frac{2\gamma\mu}{3}\right)^K\right]\mathbb E\left\| F (z^0) \right\|^2\\
+    &\leqslant& \left[2\frac{\gamma\ell\left(1+\frac{\alpha}{n}\right)}{1 - \gamma\ell\left(1+\frac{\alpha}{n}\right)} + 2\exp\left(-\frac{2}{3}\gamma\mu K\right)\right]\mathbb E\left\| F (z^0) \right\|^2.
+\end{eqnarray*}
+Здесь использовалось, что $\gamma \mu \in (0;1)$ и $(1 - \gamma \mu)\leq \exp(-\gamma\mu)$. Подставив $\gamma = \frac{1}{8\ell\left(1+\frac{\alpha}{n}\right)}$ и $K = \frac{30\ell\left(1+\frac{\alpha}{n}\right)}{\mu}$, получаем оценку
+\begin{align*}
+    \mathbb E\left\| F (z^K) \right\|^2 &\leqslant \frac{1}{2} \mathbb E\left\| F (z^0) \right\|^2.
+\end{align*}
+Так как $z^0 = \tilde z^{s-1}$ и $z^K = \tilde z^s$, была получена сходимость за одну эпоху
+\begin{align*}
+    \mathbb E\left\| F (\tilde z^s) \right\|^2 &\leqslant \frac{1}{2} \mathbb E\left\| F (\tilde z^{s-1}) \right\|^2.
+\end{align*}
+\end{proof}
+
+\begin{corollary}\label{cor:1}
+Пусть выполнены Предположения \ref{as:coerc}, \ref{as:strmon}, \ref{as:bias}, \ref{as:comp}. Тогда Алгоритм \ref{alg:marina} с $\gamma = \frac{1}{8\ell\left(1+\frac{\alpha}{n}\right)}$ и $K = \frac{30\ell\left(1+\frac{\alpha}{n}\right)}{\mu}$ для достижения $\varepsilon$-точности, где $\varepsilon^2\sim\mathbb E\left\|F(\tilde z^S)\right\|^2$, требует
+\begin{align*}
+    \mathcal{O}\left( \left[1 + \delta\frac{\ell}{\mu}\left(1 + \frac{\alpha}{n}\right) \right]\log_2 \frac{\| F(z^0)\|^2}{\varepsilon^2}\right) 
+\end{align*}
+пересылок градиента для каждого устройства.
+\end{corollary}
+\begin{proof}
+Из Теоремы \ref{th:1}:
+\begin{eqnarray*}
+    \mathbb E\left\| F (\tilde z^S) \right\|^2 &\leqslant (\frac{1}{2})^S \mathbb E\left\| F (z^0) \right\|^2.
+\end{eqnarray*}
+Тогда для достижении точности $\varepsilon^2\sim\mathbb E\left\|F(\tilde z^S)\right\|^2$ нам нужно следующее число внешних итераций (эпох) S:
+\begin{align*}
+    S = \mathcal{O}\left( \log_2 \frac{\| F(z^0)\|^2}{\varepsilon^2}\right).
+\end{align*}
+На каждой внешней итерации полный оператор  пересылается только один раз, а в течении остальных $K-1$ внутренних итераций используются сжатые версии размера $\delta$ (Предположение \ref{as:comp}). Тогда каждое устройство пересылает следующее количество градиентов:
+\begin{align*}
+    S \times \left(1 + \delta \times (K-1)\right) = \mathcal{O}\left( \left[1 + \delta\frac{\ell}{\mu}\left(1 + \frac{\alpha}{n}\right) \right]\log_2 \frac{\| F(z^0)\|^2}{\varepsilon^2}\right).
+\end{align*}
+\end{proof}
+\begin{remark}
+Выбирая $\delta \leqslant \frac{1}{\alpha}$ и $\alpha = n$, Следствие \ref{cor:1} дает следующую оценку на сложность коммуникаций:
+\begin{align*}
+    \mathcal{O}\left( \left[1 + \frac{\ell}{\mu n} \right]\log_2 \frac{\| F(z^0)\|^2}{\varepsilon^2}\right). 
+\end{align*}
+\end{remark}
+
+
+Сравнивая полученный результат с другими методами, отметим, что в работе \cite{beznosikov2023stochastic} была получена такая же оценка сходимости метода \textsc{DIANA} для кокоэрсивных вариационных неравенств.
+
+\section{Эксперименты}
+
+В данном разделе демонстрируется практическое применение предложенного алгоритма. Наша основная цель — оценить эффективность различных методов для решения вариационных неравенств с кокоэрсивными свойствами. 
+В частности, проводится сравнение производительности метода с несмещенной компрессией, метода с квантизацией \cite{jacob2018quantization} и метода без компрессии для алгоритма \textsc{MARINA}.
+
+Рассмотрим задачу седловой точки конечной суммы, определяемую следующим образом:
+\[
+    g(x, y) = \frac{1}{n} \sum_{i=1}^n \left[x^\top A_i y + a_i^\top x + b_i^\top y + \frac{\lambda}{2} \|x\|^2 - \frac{\lambda}{2} \|y\|^2\right],
+\]
+где $A_i \in \mathbb{R}^{d \times d}$, $a_i, b_i \in \mathbb{R}^d$. Данная задача является $\lambda$-сильно выпуклой по $x$ и $\lambda$-сильно вогнутой по $y$, а также $L$-гладкой с $L = \|A\|_2$, где $A = \frac{1}{n} \sum_{i=1}^n A_i$.
+
+Положим $n = 10$, $d = 100$, и $\lambda = 1$. Матрицы $A_i$ и векторы $a_i$, $b_i$ генерируются случайным образом. Примечательно, что константа кокоэрсивности для данной задачи определяется как $\ell = \frac{\|A\|_2^2}{\lambda}$. Эти параметры позволяют исследовать поведение алгоритмов в различных условиях.
+
+В качестве критерия возьмем квадрат нормы градиента на $k-$ой итерации, отнесенного к квадрату нормы функционала на первой итерации: $\left\|\frac{F(z^k)}{F(z^0)}\right\|^2$. Обозначим $\delta = \frac{K}{d}$ -- отношение числа координат в компрессии, которые выбираются, к общей размерности задачи. Для экспериментов использовалась квантизация для перевода чисел из формата fp-32 в формат int-8, что позволяет значительно оптимизировать модели за счет уменьшения размера весов модели в 4 раза и того, что многие процессоры эффективнее обрабатывают 8-битные данные \cite{krishnamoorthi2018quantizing, wu2020integer}. Метод квантизации для удобства на графиках обозначаем \textsc{Q-MARINA}. По оси абсцисс отображается объем передаваемой информации в килобитах, что позволяет оценить эффективность алгоритмов с учетом ограничений на передачу данных. 
+Для комплексной оценки методов проектируются три экспериментальных сценария с разными уровнями кокоэрсивности: низким ($\ell \approx 10^2$), средним ($\ell \approx 10^3$) и высоким ($\ell \approx 10^4$).
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{plots.pdf}
+\caption{\small Сравнение производительности методов на основе MARINA для кокоэрсивных вариационных неравенств на билинейной задаче седловой точки.}
+    \label{fig:min}
+\end{figure}
+Результаты экспериментов представлены на Рис.~\ref{fig:min}. Как видно из графиков, методы \textsc{MARINA} с компрессией стабильно превосходит методы без нее во всех сценариях. В то время как сжатие \textsc{Rand-K} демонстрирует приемлемую производительность, оно уступает квантизации. В свою очередь, метод без сжатия показывает значительно более медленную сходимость с точки зрения объемов передаваемой информации, что подчеркивает его ограничения при решении задач больших размерностей.
+
+Таким образом, эксперименты подтверждают эффективность предложенного подхода к решению вариационных неравенств. Метод \textsc{MARINA} с компрессией обеспечивает значительное сокращение объемов передаваемой информации при сохранении скорости сходимости. Это делает его перспективным инструментом для распределенных систем, где ограниченные ресурсы передачи данных являются критическим фактором.
+
+\section*{Финансирование}
+
+Работа выполнена в Лаборатории проблем федеративного обучения ИСП РАН при поддержке  Минобрнауки России (д.с. № 2 от «19» апреля 2024 г. к Соглашению № 075-03-2024-214 от «18» января 2024 г.)
+
+\printbibliography
+
+{\vskip 12pt\normalfont\sffamily\bfseries\large Информация об авторах / Information about authors}
+\setlength{\parskip}{6pt}
+
+Даниил Олегович МЕДЯКОВ~--- магистрант Московского физико-технического института, лаборант лаборатории проблем федеративного обучения, старший лаборант исследовательского центра доверенного искусственного интеллекта Института системного программирования РАН. Сфера научных интересов: стохастическая оптимизация, распределенное и федеративное обучение.
+
+Daniil Olegovich MEDYAKOV~--- master student at Moscow Institute of Physics and Technology, laboratory assistant at the Laboratory of Federated Learning Problems, senior laboratory assistant at the Research Center of Trusted Artificial Intelligence of the Institute for System Programming of the Russian Academy of Sciences. Research interests: stochastic optimization, distributed and federated learning.
+
+Глеб Львович МОЛОДЦОВ~--- магистрант Московского физико-технического института, лаборант лаборатории проблем федеративного обучения Института системного программирования РАН. Сфера научных интересов: стохастическая оптимизация, распределенное и федеративное обучение.
+
+Gleb Lvovich MOLODTSOV~--- master student at Moscow Institute of Physics and Technology, laboratory assistant at the Laboratory of Federated Learning Problems of the Institute for System Programming of the Russian Academy of Sciences. Research interests: stochastic optimization, distributed and federated learning.
+
+Александр Николаевич БЕЗНОСИКОВ~--- кандидат физико-математических наук,  заведующий лабораторией проблем федеративного обучения Института системного программирования РАН, доцент кафедры математических основ управления Московского физико-технического института. Сфера научных интересов: стохастическая оптимизация, распределенное и федеративное обучение.
+
+Aleksandr Nikolaevich BEZNOSIKOV~--- Candidate of Physical and Mathematical Sciences, Head of the Laboratory of Federated Learning Problems of the Institute for System Programming of the Russian Academy of Sciences, Associate Professor of the Department of Mathematical Foundations of Management for the Moscow Institute of Physics and Technology. Research interests: stochastic optimization, distributed and federated learning.
+
+% \newpage
+% \section{Appendix}
+\end{document}
